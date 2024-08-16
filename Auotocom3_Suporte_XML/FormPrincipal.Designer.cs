@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormPrincipal));
             lblResultado = new Label();
             Caixa = new DataGridViewTextBoxColumn();
             Chave = new DataGridViewTextBoxColumn();
@@ -57,7 +58,7 @@
             lblResultado.AutoSize = true;
             lblResultado.Font = new Font("Arial Black", 16F, FontStyle.Regular, GraphicsUnit.Point);
             lblResultado.ForeColor = Color.Red;
-            lblResultado.Location = new Point(425, 386);
+            lblResultado.Location = new Point(379, 386);
             lblResultado.Name = "lblResultado";
             lblResultado.Size = new Size(82, 31);
             lblResultado.TabIndex = 34;
@@ -87,7 +88,7 @@
             // 
             label1.AutoSize = true;
             label1.Font = new Font("Arial Black", 16F, FontStyle.Regular, GraphicsUnit.Point);
-            label1.Location = new Point(336, 386);
+            label1.Location = new Point(290, 386);
             label1.Name = "label1";
             label1.Size = new Size(83, 31);
             label1.TabIndex = 33;
@@ -117,7 +118,7 @@
             materialCheckbox1.Size = new Size(31, 31);
             materialCheckbox1.TabIndex = 31;
             materialCheckbox1.UseVisualStyleBackColor = true;
-            materialCheckbox1.CheckedChanged += this.materialCheckbox1_CheckedChanged;
+            materialCheckbox1.CheckedChanged += materialCheckbox1_CheckedChanged;
             // 
             // materialLabel6
             // 
@@ -272,7 +273,7 @@
             btnTestarConexao.Depth = 0;
             btnTestarConexao.HighEmphasis = true;
             btnTestarConexao.Icon = null;
-            btnTestarConexao.Location = new Point(137, 381);
+            btnTestarConexao.Location = new Point(136, 381);
             btnTestarConexao.Margin = new Padding(4, 6, 4, 6);
             btnTestarConexao.MouseState = MaterialSkin.MouseState.HOVER;
             btnTestarConexao.Name = "btnTestarConexao";
@@ -304,7 +305,7 @@
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             AutoSizeMode = AutoSizeMode.GrowAndShrink;
-            ClientSize = new Size(789, 429);
+            ClientSize = new Size(789, 638);
             Controls.Add(btnTestarConexao);
             Controls.Add(lblResultado);
             Controls.Add(label1);
@@ -323,6 +324,7 @@
             Controls.Add(textSenha);
             Controls.Add(textLogin);
             Controls.Add(materialLabel1);
+            Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "FormPrincipal";
             Sizable = false;
             Text = "Extrair XML - SUPORTE AUTOCOM3";
