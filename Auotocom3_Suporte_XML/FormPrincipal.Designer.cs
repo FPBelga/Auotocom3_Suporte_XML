@@ -50,7 +50,10 @@
             textLogin = new TextBox();
             btnTestarConexao = new MaterialSkin.Controls.MaterialButton();
             materialLabel1 = new MaterialSkin.Controls.MaterialLabel();
+            novoDataGridView = new DataGridView();
+            nota = new DataGridViewTextBoxColumn();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)novoDataGridView).BeginInit();
             SuspendLayout();
             // 
             // lblResultado
@@ -58,7 +61,7 @@
             lblResultado.AutoSize = true;
             lblResultado.Font = new Font("Arial Black", 16F, FontStyle.Regular, GraphicsUnit.Point);
             lblResultado.ForeColor = Color.Red;
-            lblResultado.Location = new Point(379, 386);
+            lblResultado.Location = new Point(108, 433);
             lblResultado.Name = "lblResultado";
             lblResultado.Size = new Size(82, 31);
             lblResultado.TabIndex = 34;
@@ -88,7 +91,7 @@
             // 
             label1.AutoSize = true;
             label1.Font = new Font("Arial Black", 16F, FontStyle.Regular, GraphicsUnit.Point);
-            label1.Location = new Point(290, 386);
+            label1.Location = new Point(19, 433);
             label1.Name = "label1";
             label1.Size = new Size(83, 31);
             label1.TabIndex = 33;
@@ -300,12 +303,29 @@
             materialLabel1.Text = "Login";
             materialLabel1.TextAlign = ContentAlignment.MiddleCenter;
             // 
+            // novoDataGridView
+            // 
+            novoDataGridView.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            novoDataGridView.Columns.AddRange(new DataGridViewColumn[] { nota });
+            novoDataGridView.Location = new Point(441, 386);
+            novoDataGridView.Name = "novoDataGridView";
+            novoDataGridView.RowTemplate.Height = 25;
+            novoDataGridView.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            novoDataGridView.Size = new Size(332, 150);
+            novoDataGridView.TabIndex = 37;
+            // 
+            // nota
+            // 
+            nota.HeaderText = "Nota";
+            nota.Name = "nota";
+            // 
             // FormPrincipal
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             AutoSizeMode = AutoSizeMode.GrowAndShrink;
             ClientSize = new Size(789, 638);
+            Controls.Add(novoDataGridView);
             Controls.Add(btnTestarConexao);
             Controls.Add(lblResultado);
             Controls.Add(label1);
@@ -327,8 +347,10 @@
             Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "FormPrincipal";
             Sizable = false;
+            StartPosition = FormStartPosition.CenterScreen;
             Text = "Extrair XML - SUPORTE AUTOCOM3";
             ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
+            ((System.ComponentModel.ISupportInitialize)novoDataGridView).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -356,5 +378,7 @@
         private TextBox textLogin;
         private MaterialSkin.Controls.MaterialButton btnTestarConexao;
         private MaterialSkin.Controls.MaterialLabel materialLabel1;
+        private DataGridView novoDataGridView;
+        private DataGridViewTextBoxColumn nota;
     }
 }
