@@ -30,9 +30,6 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormPrincipal));
             lblResultado = new Label();
-            Caixa = new DataGridViewTextBoxColumn();
-            Chave = new DataGridViewTextBoxColumn();
-            Emissão = new DataGridViewTextBoxColumn();
             label1 = new Label();
             dataGridView1 = new DataGridView();
             materialCheckbox1 = new MaterialSkin.Controls.MaterialCheckbox();
@@ -48,10 +45,25 @@
             textServidor = new TextBox();
             textSenha = new TextBox();
             textLogin = new TextBox();
-            btnTestarConexao = new MaterialSkin.Controls.MaterialButton();
             materialLabel1 = new MaterialSkin.Controls.MaterialLabel();
             novoDataGridView = new DataGridView();
             nota = new DataGridViewTextBoxColumn();
+            lbQtdNotas = new Label();
+            label3 = new Label();
+            btnRelXMLPDF = new MaterialSkin.Controls.MaterialButton();
+            lbTotalNfe = new Label();
+            label4 = new Label();
+            lbTotalNfce = new Label();
+            label5 = new Label();
+            progressBarSalvando = new ProgressBar();
+            btnTestarConexao = new MaterialSkin.Controls.MaterialButton();
+            label2 = new Label();
+            btnRelXMLEXCEL = new MaterialSkin.Controls.MaterialButton();
+            btnRelFaltntesLEXCEL = new MaterialSkin.Controls.MaterialButton();
+            label6 = new Label();
+            btnRelFaltntesLPDF = new MaterialSkin.Controls.MaterialButton();
+            Chave = new DataGridViewTextBoxColumn();
+            Caixa = new DataGridViewTextBoxColumn();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
             ((System.ComponentModel.ISupportInitialize)novoDataGridView).BeginInit();
             SuspendLayout();
@@ -59,53 +71,34 @@
             // lblResultado
             // 
             lblResultado.AutoSize = true;
-            lblResultado.Font = new Font("Arial Black", 16F, FontStyle.Regular, GraphicsUnit.Point);
+            lblResultado.Font = new Font("Arial Black", 12F, FontStyle.Regular, GraphicsUnit.Point);
             lblResultado.ForeColor = Color.Red;
-            lblResultado.Location = new Point(108, 433);
+            lblResultado.Location = new Point(408, 504);
             lblResultado.Name = "lblResultado";
-            lblResultado.Size = new Size(82, 31);
+            lblResultado.Size = new Size(60, 23);
             lblResultado.TabIndex = 34;
             lblResultado.Text = "Soma";
-            // 
-            // Caixa
-            // 
-            Caixa.DataPropertyName = "caixa";
-            Caixa.HeaderText = "caixa";
-            Caixa.Name = "Caixa";
-            Caixa.Width = 60;
-            // 
-            // Chave
-            // 
-            Chave.DataPropertyName = "chavenfe";
-            Chave.HeaderText = "chavenfe";
-            Chave.Name = "Chave";
-            Chave.Width = 300;
-            // 
-            // Emissão
-            // 
-            Emissão.DataPropertyName = "data";
-            Emissão.HeaderText = "data";
-            Emissão.Name = "Emissão";
+            lblResultado.Visible = false;
             // 
             // label1
             // 
             label1.AutoSize = true;
-            label1.Font = new Font("Arial Black", 16F, FontStyle.Regular, GraphicsUnit.Point);
-            label1.Location = new Point(19, 433);
+            label1.Font = new Font("Arial Black", 12F, FontStyle.Regular, GraphicsUnit.Point);
+            label1.Location = new Point(286, 504);
             label1.Name = "label1";
-            label1.Size = new Size(83, 31);
+            label1.Size = new Size(110, 23);
             label1.TabIndex = 33;
-            label1.Text = "Total:";
+            label1.Text = "Valor Total:";
             // 
             // dataGridView1
             // 
             dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridView1.Columns.AddRange(new DataGridViewColumn[] { Emissão, Chave, Caixa });
+            dataGridView1.Columns.AddRange(new DataGridViewColumn[] { Chave, Caixa });
             dataGridView1.Location = new Point(283, 64);
             dataGridView1.Name = "dataGridView1";
             dataGridView1.RowTemplate.Height = 25;
             dataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dataGridView1.Size = new Size(500, 316);
+            dataGridView1.Size = new Size(497, 286);
             dataGridView1.TabIndex = 32;
             // 
             // materialCheckbox1
@@ -209,7 +202,7 @@
             btnCarregarDados.Depth = 0;
             btnCarregarDados.HighEmphasis = true;
             btnCarregarDados.Icon = null;
-            btnCarregarDados.Location = new Point(19, 381);
+            btnCarregarDados.Location = new Point(86, 359);
             btnCarregarDados.Margin = new Padding(4, 6, 4, 6);
             btnCarregarDados.MouseState = MaterialSkin.MouseState.HOVER;
             btnCarregarDados.Name = "btnCarregarDados";
@@ -269,26 +262,6 @@
             textLogin.Text = "sa";
             textLogin.TextAlign = HorizontalAlignment.Center;
             // 
-            // btnTestarConexao
-            // 
-            btnTestarConexao.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-            btnTestarConexao.Density = MaterialSkin.Controls.MaterialButton.MaterialButtonDensity.Default;
-            btnTestarConexao.Depth = 0;
-            btnTestarConexao.HighEmphasis = true;
-            btnTestarConexao.Icon = null;
-            btnTestarConexao.Location = new Point(136, 381);
-            btnTestarConexao.Margin = new Padding(4, 6, 4, 6);
-            btnTestarConexao.MouseState = MaterialSkin.MouseState.HOVER;
-            btnTestarConexao.Name = "btnTestarConexao";
-            btnTestarConexao.NoAccentTextColor = Color.Empty;
-            btnTestarConexao.Size = new Size(147, 36);
-            btnTestarConexao.TabIndex = 35;
-            btnTestarConexao.Text = "TESTAR CONEXÃO";
-            btnTestarConexao.Type = MaterialSkin.Controls.MaterialButton.MaterialButtonType.Contained;
-            btnTestarConexao.UseAccentColor = false;
-            btnTestarConexao.UseVisualStyleBackColor = true;
-            btnTestarConexao.Click += btnTestarConexao_Click;
-            // 
             // materialLabel1
             // 
             materialLabel1.Depth = 0;
@@ -307,24 +280,248 @@
             // 
             novoDataGridView.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             novoDataGridView.Columns.AddRange(new DataGridViewColumn[] { nota });
-            novoDataGridView.Location = new Point(441, 386);
+            novoDataGridView.Location = new Point(632, 359);
             novoDataGridView.Name = "novoDataGridView";
             novoDataGridView.RowTemplate.Height = 25;
             novoDataGridView.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            novoDataGridView.Size = new Size(332, 150);
+            novoDataGridView.Size = new Size(148, 180);
             novoDataGridView.TabIndex = 37;
             // 
             // nota
             // 
-            nota.HeaderText = "Nota";
+            nota.HeaderText = "Nota Faltantes";
             nota.Name = "nota";
+            // 
+            // lbQtdNotas
+            // 
+            lbQtdNotas.AutoSize = true;
+            lbQtdNotas.Font = new Font("Arial Black", 12F, FontStyle.Regular, GraphicsUnit.Point);
+            lbQtdNotas.ForeColor = Color.Red;
+            lbQtdNotas.Location = new Point(406, 400);
+            lbQtdNotas.Name = "lbQtdNotas";
+            lbQtdNotas.Size = new Size(62, 23);
+            lbQtdNotas.TabIndex = 39;
+            lbQtdNotas.Text = "Notas";
+            lbQtdNotas.Visible = false;
+            // 
+            // label3
+            // 
+            label3.AutoSize = true;
+            label3.Font = new Font("Arial Black", 12F, FontStyle.Regular, GraphicsUnit.Point);
+            label3.Location = new Point(283, 400);
+            label3.Name = "label3";
+            label3.Size = new Size(109, 23);
+            label3.TabIndex = 38;
+            label3.Text = "QTD Notas:";
+            // 
+            // btnRelXMLPDF
+            // 
+            btnRelXMLPDF.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            btnRelXMLPDF.Density = MaterialSkin.Controls.MaterialButton.MaterialButtonDensity.Default;
+            btnRelXMLPDF.Depth = 0;
+            btnRelXMLPDF.Enabled = false;
+            btnRelXMLPDF.HighEmphasis = true;
+            btnRelXMLPDF.Icon = null;
+            btnRelXMLPDF.Location = new Point(45, 429);
+            btnRelXMLPDF.Margin = new Padding(4, 6, 4, 6);
+            btnRelXMLPDF.MouseState = MaterialSkin.MouseState.HOVER;
+            btnRelXMLPDF.Name = "btnRelXMLPDF";
+            btnRelXMLPDF.NoAccentTextColor = Color.Empty;
+            btnRelXMLPDF.Size = new Size(64, 36);
+            btnRelXMLPDF.TabIndex = 40;
+            btnRelXMLPDF.Text = "PDF";
+            btnRelXMLPDF.Type = MaterialSkin.Controls.MaterialButton.MaterialButtonType.Contained;
+            btnRelXMLPDF.UseAccentColor = false;
+            btnRelXMLPDF.UseVisualStyleBackColor = true;
+            btnRelXMLPDF.Click += btnRelXMLPDF_Click_1;
+            // 
+            // lbTotalNfe
+            // 
+            lbTotalNfe.AutoSize = true;
+            lbTotalNfe.Font = new Font("Arial Black", 12F, FontStyle.Regular, GraphicsUnit.Point);
+            lbTotalNfe.ForeColor = Color.Red;
+            lbTotalNfe.Location = new Point(405, 433);
+            lbTotalNfe.Name = "lbTotalNfe";
+            lbTotalNfe.Size = new Size(99, 23);
+            lbTotalNfe.TabIndex = 43;
+            lbTotalNfe.Text = "Soma NFe";
+            lbTotalNfe.Visible = false;
+            // 
+            // label4
+            // 
+            label4.AutoSize = true;
+            label4.Font = new Font("Arial Black", 12F, FontStyle.Regular, GraphicsUnit.Point);
+            label4.Location = new Point(283, 433);
+            label4.Name = "label4";
+            label4.Size = new Size(99, 23);
+            label4.TabIndex = 42;
+            label4.Text = "Total NFe:";
+            // 
+            // lbTotalNfce
+            // 
+            lbTotalNfce.AutoSize = true;
+            lbTotalNfce.Font = new Font("Arial Black", 12F, FontStyle.Regular, GraphicsUnit.Point);
+            lbTotalNfce.ForeColor = Color.Red;
+            lbTotalNfce.Location = new Point(405, 469);
+            lbTotalNfce.Name = "lbTotalNfce";
+            lbTotalNfce.Size = new Size(111, 23);
+            lbTotalNfce.TabIndex = 45;
+            lbTotalNfce.Text = "Soma NCFe";
+            lbTotalNfce.Visible = false;
+            // 
+            // label5
+            // 
+            label5.AutoSize = true;
+            label5.Font = new Font("Arial Black", 12F, FontStyle.Regular, GraphicsUnit.Point);
+            label5.Location = new Point(283, 469);
+            label5.Name = "label5";
+            label5.Size = new Size(111, 23);
+            label5.TabIndex = 44;
+            label5.Text = "Total NCFe:";
+            // 
+            // progressBarSalvando
+            // 
+            progressBarSalvando.Location = new Point(3, 547);
+            progressBarSalvando.Name = "progressBarSalvando";
+            progressBarSalvando.Size = new Size(784, 17);
+            progressBarSalvando.TabIndex = 46;
+            // 
+            // btnTestarConexao
+            // 
+            btnTestarConexao.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            btnTestarConexao.Density = MaterialSkin.Controls.MaterialButton.MaterialButtonDensity.Default;
+            btnTestarConexao.Depth = 0;
+            btnTestarConexao.HighEmphasis = true;
+            btnTestarConexao.Icon = null;
+            btnTestarConexao.Location = new Point(269, 359);
+            btnTestarConexao.Margin = new Padding(4, 6, 4, 6);
+            btnTestarConexao.MouseState = MaterialSkin.MouseState.HOVER;
+            btnTestarConexao.Name = "btnTestarConexao";
+            btnTestarConexao.NoAccentTextColor = Color.Empty;
+            btnTestarConexao.Size = new Size(147, 36);
+            btnTestarConexao.TabIndex = 35;
+            btnTestarConexao.Text = "TESTAR CONEXÃO";
+            btnTestarConexao.Type = MaterialSkin.Controls.MaterialButton.MaterialButtonType.Contained;
+            btnTestarConexao.UseAccentColor = false;
+            btnTestarConexao.UseVisualStyleBackColor = true;
+            btnTestarConexao.Click += btnTestarConexao_Click;
+            // 
+            // label2
+            // 
+            label2.AutoSize = true;
+            label2.Font = new Font("Arial Black", 12F, FontStyle.Regular, GraphicsUnit.Point);
+            label2.Location = new Point(36, 400);
+            label2.Name = "label2";
+            label2.Size = new Size(220, 23);
+            label2.TabIndex = 47;
+            label2.Text = "Relatório XML Baixados";
+            // 
+            // btnRelXMLEXCEL
+            // 
+            btnRelXMLEXCEL.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            btnRelXMLEXCEL.Density = MaterialSkin.Controls.MaterialButton.MaterialButtonDensity.Default;
+            btnRelXMLEXCEL.Depth = 0;
+            btnRelXMLEXCEL.Enabled = false;
+            btnRelXMLEXCEL.HighEmphasis = true;
+            btnRelXMLEXCEL.Icon = null;
+            btnRelXMLEXCEL.Location = new Point(162, 430);
+            btnRelXMLEXCEL.Margin = new Padding(4, 6, 4, 6);
+            btnRelXMLEXCEL.MouseState = MaterialSkin.MouseState.HOVER;
+            btnRelXMLEXCEL.Name = "btnRelXMLEXCEL";
+            btnRelXMLEXCEL.NoAccentTextColor = Color.Empty;
+            btnRelXMLEXCEL.Size = new Size(65, 36);
+            btnRelXMLEXCEL.TabIndex = 48;
+            btnRelXMLEXCEL.Text = "EXCEL";
+            btnRelXMLEXCEL.Type = MaterialSkin.Controls.MaterialButton.MaterialButtonType.Contained;
+            btnRelXMLEXCEL.UseAccentColor = false;
+            btnRelXMLEXCEL.UseVisualStyleBackColor = true;
+            btnRelXMLEXCEL.Click += btnRelXMLEXCEL_Click_1;
+            // 
+            // btnRelFaltntesLEXCEL
+            // 
+            btnRelFaltntesLEXCEL.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            btnRelFaltntesLEXCEL.Density = MaterialSkin.Controls.MaterialButton.MaterialButtonDensity.Default;
+            btnRelFaltntesLEXCEL.Depth = 0;
+            btnRelFaltntesLEXCEL.Enabled = false;
+            btnRelFaltntesLEXCEL.HighEmphasis = true;
+            btnRelFaltntesLEXCEL.Icon = null;
+            btnRelFaltntesLEXCEL.Location = new Point(162, 502);
+            btnRelFaltntesLEXCEL.Margin = new Padding(4, 6, 4, 6);
+            btnRelFaltntesLEXCEL.MouseState = MaterialSkin.MouseState.HOVER;
+            btnRelFaltntesLEXCEL.Name = "btnRelFaltntesLEXCEL";
+            btnRelFaltntesLEXCEL.NoAccentTextColor = Color.Empty;
+            btnRelFaltntesLEXCEL.Size = new Size(65, 36);
+            btnRelFaltntesLEXCEL.TabIndex = 51;
+            btnRelFaltntesLEXCEL.Text = "EXCEL";
+            btnRelFaltntesLEXCEL.Type = MaterialSkin.Controls.MaterialButton.MaterialButtonType.Contained;
+            btnRelFaltntesLEXCEL.UseAccentColor = false;
+            btnRelFaltntesLEXCEL.UseVisualStyleBackColor = true;
+            btnRelFaltntesLEXCEL.Click += btnRelFaltntesLEXCEL_Click;
+            // 
+            // label6
+            // 
+            label6.AutoSize = true;
+            label6.Font = new Font("Arial Black", 12F, FontStyle.Regular, GraphicsUnit.Point);
+            label6.Location = new Point(27, 471);
+            label6.Name = "label6";
+            label6.Size = new Size(236, 23);
+            label6.TabIndex = 50;
+            label6.Text = "Relatório Notas Faltantes";
+            // 
+            // btnRelFaltntesLPDF
+            // 
+            btnRelFaltntesLPDF.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            btnRelFaltntesLPDF.Density = MaterialSkin.Controls.MaterialButton.MaterialButtonDensity.Default;
+            btnRelFaltntesLPDF.Depth = 0;
+            btnRelFaltntesLPDF.Enabled = false;
+            btnRelFaltntesLPDF.HighEmphasis = true;
+            btnRelFaltntesLPDF.Icon = null;
+            btnRelFaltntesLPDF.Location = new Point(45, 501);
+            btnRelFaltntesLPDF.Margin = new Padding(4, 6, 4, 6);
+            btnRelFaltntesLPDF.MouseState = MaterialSkin.MouseState.HOVER;
+            btnRelFaltntesLPDF.Name = "btnRelFaltntesLPDF";
+            btnRelFaltntesLPDF.NoAccentTextColor = Color.Empty;
+            btnRelFaltntesLPDF.Size = new Size(64, 36);
+            btnRelFaltntesLPDF.TabIndex = 49;
+            btnRelFaltntesLPDF.Text = "PDF";
+            btnRelFaltntesLPDF.Type = MaterialSkin.Controls.MaterialButton.MaterialButtonType.Contained;
+            btnRelFaltntesLPDF.UseAccentColor = false;
+            btnRelFaltntesLPDF.UseVisualStyleBackColor = true;
+            btnRelFaltntesLPDF.Click += btnRelFaltntesLPDF_Click;
+            // 
+            // Chave
+            // 
+            Chave.DataPropertyName = "chavenfe";
+            Chave.HeaderText = "chavenfe";
+            Chave.Name = "Chave";
+            Chave.Width = 300;
+            // 
+            // Caixa
+            // 
+            Caixa.DataPropertyName = "caixa";
+            Caixa.HeaderText = "caixa";
+            Caixa.Name = "Caixa";
+            Caixa.Width = 60;
             // 
             // FormPrincipal
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             AutoSizeMode = AutoSizeMode.GrowAndShrink;
-            ClientSize = new Size(789, 638);
+            ClientSize = new Size(789, 565);
+            Controls.Add(btnRelFaltntesLEXCEL);
+            Controls.Add(label6);
+            Controls.Add(btnRelFaltntesLPDF);
+            Controls.Add(btnRelXMLEXCEL);
+            Controls.Add(label2);
+            Controls.Add(progressBarSalvando);
+            Controls.Add(lbTotalNfce);
+            Controls.Add(label5);
+            Controls.Add(lbTotalNfe);
+            Controls.Add(label4);
+            Controls.Add(btnRelXMLPDF);
+            Controls.Add(lbQtdNotas);
+            Controls.Add(label3);
             Controls.Add(novoDataGridView);
             Controls.Add(btnTestarConexao);
             Controls.Add(lblResultado);
@@ -358,9 +555,6 @@
         #endregion
 
         private Label lblResultado;
-        private DataGridViewTextBoxColumn Caixa;
-        private DataGridViewTextBoxColumn Chave;
-        private DataGridViewTextBoxColumn Emissão;
         private Label label1;
         private DataGridView dataGridView1;
         private MaterialSkin.Controls.MaterialCheckbox materialCheckbox1;
@@ -376,9 +570,24 @@
         private TextBox textServidor;
         private TextBox textSenha;
         private TextBox textLogin;
-        private MaterialSkin.Controls.MaterialButton btnTestarConexao;
         private MaterialSkin.Controls.MaterialLabel materialLabel1;
         private DataGridView novoDataGridView;
         private DataGridViewTextBoxColumn nota;
+        private Label lbQtdNotas;
+        private Label label3;
+        private MaterialSkin.Controls.MaterialButton btnRelXMLPDF;
+        private Label lbTotalNfe;
+        private Label label4;
+        private Label lbTotalNfce;
+        private Label label5;
+        private ProgressBar progressBarSalvando;
+        private MaterialSkin.Controls.MaterialButton btnTestarConexao;
+        private Label label2;
+        private MaterialSkin.Controls.MaterialButton btnRelXMLEXCEL;
+        private MaterialSkin.Controls.MaterialButton btnRelFaltntesLEXCEL;
+        private Label label6;
+        private MaterialSkin.Controls.MaterialButton btnRelFaltntesLPDF;
+        private DataGridViewTextBoxColumn Chave;
+        private DataGridViewTextBoxColumn Caixa;
     }
 }
