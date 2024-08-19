@@ -32,6 +32,8 @@
             lblResultado = new Label();
             label1 = new Label();
             dataGridView1 = new DataGridView();
+            Chave = new DataGridViewTextBoxColumn();
+            Caixa = new DataGridViewTextBoxColumn();
             materialCheckbox1 = new MaterialSkin.Controls.MaterialCheckbox();
             materialLabel6 = new MaterialSkin.Controls.MaterialLabel();
             textCaixas = new TextBox();
@@ -62,8 +64,14 @@
             btnRelFaltntesLEXCEL = new MaterialSkin.Controls.MaterialButton();
             label6 = new Label();
             btnRelFaltntesLPDF = new MaterialSkin.Controls.MaterialButton();
-            Chave = new DataGridViewTextBoxColumn();
-            Caixa = new DataGridViewTextBoxColumn();
+            textAno = new TextBox();
+            textMes = new TextBox();
+            materialLabel7 = new MaterialSkin.Controls.MaterialLabel();
+            button1 = new Button();
+            materialLabel8 = new MaterialSkin.Controls.MaterialLabel();
+            textDataIni = new MaskedTextBox();
+            textDataFim = new MaskedTextBox();
+            materialLabel9 = new MaterialSkin.Controls.MaterialLabel();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
             ((System.ComponentModel.ISupportInitialize)novoDataGridView).BeginInit();
             SuspendLayout();
@@ -101,10 +109,24 @@
             dataGridView1.Size = new Size(497, 286);
             dataGridView1.TabIndex = 32;
             // 
+            // Chave
+            // 
+            Chave.DataPropertyName = "chavenfe";
+            Chave.HeaderText = "chavenfe";
+            Chave.Name = "Chave";
+            Chave.Width = 300;
+            // 
+            // Caixa
+            // 
+            Caixa.DataPropertyName = "caixa";
+            Caixa.HeaderText = "caixa";
+            Caixa.Name = "Caixa";
+            Caixa.Width = 60;
+            // 
             // materialCheckbox1
             // 
             materialCheckbox1.Depth = 0;
-            materialCheckbox1.Location = new Point(64, 295);
+            materialCheckbox1.Location = new Point(64, 285);
             materialCheckbox1.Margin = new Padding(0);
             materialCheckbox1.MouseLocation = new Point(-1, -1);
             materialCheckbox1.MouseState = MaterialSkin.MouseState.HOVER;
@@ -121,7 +143,7 @@
             materialLabel6.Depth = 0;
             materialLabel6.Font = new Font("Roboto", 14F, FontStyle.Bold, GraphicsUnit.Pixel);
             materialLabel6.FontType = MaterialSkin.MaterialSkinManager.fontType.Button;
-            materialLabel6.Location = new Point(-15, 305);
+            materialLabel6.Location = new Point(-15, 295);
             materialLabel6.MouseState = MaterialSkin.MouseState.HOVER;
             materialLabel6.Name = "materialLabel6";
             materialLabel6.RightToLeft = RightToLeft.No;
@@ -133,7 +155,7 @@
             // textCaixas
             // 
             textCaixas.Enabled = false;
-            textCaixas.Location = new Point(19, 327);
+            textCaixas.Location = new Point(19, 317);
             textCaixas.Name = "textCaixas";
             textCaixas.Size = new Size(250, 23);
             textCaixas.TabIndex = 29;
@@ -144,13 +166,13 @@
             materialLabel5.Depth = 0;
             materialLabel5.Font = new Font("Roboto", 14F, FontStyle.Bold, GraphicsUnit.Pixel);
             materialLabel5.FontType = MaterialSkin.MaterialSkinManager.fontType.Button;
-            materialLabel5.Location = new Point(-15, 252);
+            materialLabel5.Location = new Point(0, 259);
             materialLabel5.MouseState = MaterialSkin.MouseState.HOVER;
             materialLabel5.Name = "materialLabel5";
             materialLabel5.RightToLeft = RightToLeft.No;
-            materialLabel5.Size = new Size(321, 17);
+            materialLabel5.Size = new Size(65, 22);
             materialLabel5.TabIndex = 28;
-            materialLabel5.Text = "Nome Banco";
+            materialLabel5.Text = "Ano";
             materialLabel5.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // materialLabel4
@@ -202,7 +224,7 @@
             btnCarregarDados.Depth = 0;
             btnCarregarDados.HighEmphasis = true;
             btnCarregarDados.Icon = null;
-            btnCarregarDados.Location = new Point(86, 359);
+            btnCarregarDados.Location = new Point(87, 410);
             btnCarregarDados.Margin = new Padding(4, 6, 4, 6);
             btnCarregarDados.MouseState = MaterialSkin.MouseState.HOVER;
             btnCarregarDados.Name = "btnCarregarDados";
@@ -217,15 +239,16 @@
             // 
             // textDatabase
             // 
-            textDatabase.Location = new Point(19, 270);
+            textDatabase.Location = new Point(286, 356);
             textDatabase.Name = "textDatabase";
             textDatabase.Size = new Size(250, 23);
             textDatabase.TabIndex = 22;
-            textDatabase.Text = "Autocom3_Filial_Movimento_Mensal_2024_07";
             textDatabase.TextAlign = HorizontalAlignment.Center;
+            textDatabase.Visible = false;
             // 
             // textPorta
             // 
+            textPorta.Enabled = false;
             textPorta.Location = new Point(19, 222);
             textPorta.Name = "textPorta";
             textPorta.Size = new Size(250, 23);
@@ -235,6 +258,7 @@
             // 
             // textServidor
             // 
+            textServidor.Enabled = false;
             textServidor.Location = new Point(19, 174);
             textServidor.Name = "textServidor";
             textServidor.Size = new Size(250, 23);
@@ -244,6 +268,7 @@
             // 
             // textSenha
             // 
+            textSenha.Enabled = false;
             textSenha.Location = new Point(19, 126);
             textSenha.Name = "textSenha";
             textSenha.PasswordChar = '*';
@@ -255,6 +280,7 @@
             // 
             // textLogin
             // 
+            textLogin.Enabled = false;
             textLogin.Location = new Point(19, 82);
             textLogin.Name = "textLogin";
             textLogin.Size = new Size(250, 23);
@@ -280,7 +306,7 @@
             // 
             novoDataGridView.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             novoDataGridView.Columns.AddRange(new DataGridViewColumn[] { nota });
-            novoDataGridView.Location = new Point(632, 359);
+            novoDataGridView.Location = new Point(635, 400);
             novoDataGridView.Name = "novoDataGridView";
             novoDataGridView.RowTemplate.Height = 25;
             novoDataGridView.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
@@ -322,7 +348,7 @@
             btnRelXMLPDF.Enabled = false;
             btnRelXMLPDF.HighEmphasis = true;
             btnRelXMLPDF.Icon = null;
-            btnRelXMLPDF.Location = new Point(45, 429);
+            btnRelXMLPDF.Location = new Point(46, 477);
             btnRelXMLPDF.Margin = new Padding(4, 6, 4, 6);
             btnRelXMLPDF.MouseState = MaterialSkin.MouseState.HOVER;
             btnRelXMLPDF.Name = "btnRelXMLPDF";
@@ -381,7 +407,7 @@
             // 
             // progressBarSalvando
             // 
-            progressBarSalvando.Location = new Point(3, 547);
+            progressBarSalvando.Location = new Point(2, 582);
             progressBarSalvando.Name = "progressBarSalvando";
             progressBarSalvando.Size = new Size(784, 17);
             progressBarSalvando.TabIndex = 46;
@@ -393,7 +419,7 @@
             btnTestarConexao.Depth = 0;
             btnTestarConexao.HighEmphasis = true;
             btnTestarConexao.Icon = null;
-            btnTestarConexao.Location = new Point(269, 359);
+            btnTestarConexao.Location = new Point(633, 359);
             btnTestarConexao.Margin = new Padding(4, 6, 4, 6);
             btnTestarConexao.MouseState = MaterialSkin.MouseState.HOVER;
             btnTestarConexao.Name = "btnTestarConexao";
@@ -410,7 +436,7 @@
             // 
             label2.AutoSize = true;
             label2.Font = new Font("Arial Black", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            label2.Location = new Point(36, 400);
+            label2.Location = new Point(37, 452);
             label2.Name = "label2";
             label2.Size = new Size(220, 23);
             label2.TabIndex = 47;
@@ -424,7 +450,7 @@
             btnRelXMLEXCEL.Enabled = false;
             btnRelXMLEXCEL.HighEmphasis = true;
             btnRelXMLEXCEL.Icon = null;
-            btnRelXMLEXCEL.Location = new Point(162, 430);
+            btnRelXMLEXCEL.Location = new Point(183, 477);
             btnRelXMLEXCEL.Margin = new Padding(4, 6, 4, 6);
             btnRelXMLEXCEL.MouseState = MaterialSkin.MouseState.HOVER;
             btnRelXMLEXCEL.Name = "btnRelXMLEXCEL";
@@ -445,7 +471,7 @@
             btnRelFaltntesLEXCEL.Enabled = false;
             btnRelFaltntesLEXCEL.HighEmphasis = true;
             btnRelFaltntesLEXCEL.Icon = null;
-            btnRelFaltntesLEXCEL.Location = new Point(162, 502);
+            btnRelFaltntesLEXCEL.Location = new Point(183, 538);
             btnRelFaltntesLEXCEL.Margin = new Padding(4, 6, 4, 6);
             btnRelFaltntesLEXCEL.MouseState = MaterialSkin.MouseState.HOVER;
             btnRelFaltntesLEXCEL.Name = "btnRelFaltntesLEXCEL";
@@ -462,7 +488,7 @@
             // 
             label6.AutoSize = true;
             label6.Font = new Font("Arial Black", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            label6.Location = new Point(27, 471);
+            label6.Location = new Point(28, 513);
             label6.Name = "label6";
             label6.Size = new Size(236, 23);
             label6.TabIndex = 50;
@@ -476,7 +502,7 @@
             btnRelFaltntesLPDF.Enabled = false;
             btnRelFaltntesLPDF.HighEmphasis = true;
             btnRelFaltntesLPDF.Icon = null;
-            btnRelFaltntesLPDF.Location = new Point(45, 501);
+            btnRelFaltntesLPDF.Location = new Point(46, 538);
             btnRelFaltntesLPDF.Margin = new Padding(4, 6, 4, 6);
             btnRelFaltntesLPDF.MouseState = MaterialSkin.MouseState.HOVER;
             btnRelFaltntesLPDF.Name = "btnRelFaltntesLPDF";
@@ -489,26 +515,105 @@
             btnRelFaltntesLPDF.UseVisualStyleBackColor = true;
             btnRelFaltntesLPDF.Click += btnRelFaltntesLPDF_Click;
             // 
-            // Chave
+            // textAno
             // 
-            Chave.DataPropertyName = "chavenfe";
-            Chave.HeaderText = "chavenfe";
-            Chave.Name = "Chave";
-            Chave.Width = 300;
+            textAno.Location = new Point(59, 258);
+            textAno.Name = "textAno";
+            textAno.Size = new Size(59, 23);
+            textAno.TabIndex = 52;
+            textAno.Text = "2024";
+            textAno.TextAlign = HorizontalAlignment.Center;
             // 
-            // Caixa
+            // textMes
             // 
-            Caixa.DataPropertyName = "caixa";
-            Caixa.HeaderText = "caixa";
-            Caixa.Name = "Caixa";
-            Caixa.Width = 60;
+            textMes.Location = new Point(203, 258);
+            textMes.Name = "textMes";
+            textMes.Size = new Size(66, 23);
+            textMes.TabIndex = 54;
+            textMes.Text = "08";
+            textMes.TextAlign = HorizontalAlignment.Center;
+            // 
+            // materialLabel7
+            // 
+            materialLabel7.Depth = 0;
+            materialLabel7.Font = new Font("Roboto", 14F, FontStyle.Bold, GraphicsUnit.Pixel);
+            materialLabel7.FontType = MaterialSkin.MaterialSkinManager.fontType.Button;
+            materialLabel7.Location = new Point(137, 259);
+            materialLabel7.MouseState = MaterialSkin.MouseState.HOVER;
+            materialLabel7.Name = "materialLabel7";
+            materialLabel7.RightToLeft = RightToLeft.No;
+            materialLabel7.Size = new Size(60, 22);
+            materialLabel7.TabIndex = 53;
+            materialLabel7.Text = "Mês";
+            materialLabel7.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // button1
+            // 
+            button1.Location = new Point(0, 64);
+            button1.Name = "button1";
+            button1.Size = new Size(14, 11);
+            button1.TabIndex = 55;
+            button1.UseVisualStyleBackColor = true;
+            button1.Click += button1_Click;
+            // 
+            // materialLabel8
+            // 
+            materialLabel8.Depth = 0;
+            materialLabel8.Font = new Font("Roboto", 14F, FontStyle.Bold, GraphicsUnit.Pixel);
+            materialLabel8.FontType = MaterialSkin.MaterialSkinManager.fontType.Button;
+            materialLabel8.Location = new Point(35, 348);
+            materialLabel8.MouseState = MaterialSkin.MouseState.HOVER;
+            materialLabel8.Name = "materialLabel8";
+            materialLabel8.RightToLeft = RightToLeft.No;
+            materialLabel8.Size = new Size(60, 17);
+            materialLabel8.TabIndex = 56;
+            materialLabel8.Text = "Início";
+            materialLabel8.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // textDataIni
+            // 
+            textDataIni.Location = new Point(19, 367);
+            textDataIni.Name = "textDataIni";
+            textDataIni.Size = new Size(100, 23);
+            textDataIni.TabIndex = 57;
+            textDataIni.ValidatingType = typeof(DateTime);
+            // 
+            // textDataFim
+            // 
+            textDataFim.Location = new Point(169, 367);
+            textDataFim.Name = "textDataFim";
+            textDataFim.Size = new Size(100, 23);
+            textDataFim.TabIndex = 58;
+            textDataFim.ValidatingType = typeof(DateTime);
+            // 
+            // materialLabel9
+            // 
+            materialLabel9.Depth = 0;
+            materialLabel9.Font = new Font("Roboto", 14F, FontStyle.Bold, GraphicsUnit.Pixel);
+            materialLabel9.FontType = MaterialSkin.MaterialSkinManager.fontType.Button;
+            materialLabel9.Location = new Point(188, 348);
+            materialLabel9.MouseState = MaterialSkin.MouseState.HOVER;
+            materialLabel9.Name = "materialLabel9";
+            materialLabel9.RightToLeft = RightToLeft.No;
+            materialLabel9.Size = new Size(60, 17);
+            materialLabel9.TabIndex = 59;
+            materialLabel9.Text = "Fim";
+            materialLabel9.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // FormPrincipal
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             AutoSizeMode = AutoSizeMode.GrowAndShrink;
-            ClientSize = new Size(789, 565);
+            ClientSize = new Size(789, 601);
+            Controls.Add(materialLabel9);
+            Controls.Add(textDataFim);
+            Controls.Add(textDataIni);
+            Controls.Add(materialLabel8);
+            Controls.Add(button1);
+            Controls.Add(textMes);
+            Controls.Add(materialLabel7);
+            Controls.Add(textAno);
             Controls.Add(btnRelFaltntesLEXCEL);
             Controls.Add(label6);
             Controls.Add(btnRelFaltntesLPDF);
@@ -589,5 +694,13 @@
         private MaterialSkin.Controls.MaterialButton btnRelFaltntesLPDF;
         private DataGridViewTextBoxColumn Chave;
         private DataGridViewTextBoxColumn Caixa;
+        private TextBox textAno;
+        private TextBox textMes;
+        private MaterialSkin.Controls.MaterialLabel materialLabel7;
+        private Button button1;
+        private MaterialSkin.Controls.MaterialLabel materialLabel8;
+        private MaskedTextBox textDataIni;
+        private MaskedTextBox textDataFim;
+        private MaterialSkin.Controls.MaterialLabel materialLabel9;
     }
 }
