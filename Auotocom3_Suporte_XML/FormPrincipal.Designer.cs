@@ -49,7 +49,6 @@
             textLogin = new TextBox();
             materialLabel1 = new MaterialSkin.Controls.MaterialLabel();
             novoDataGridView = new DataGridView();
-            nota = new DataGridViewTextBoxColumn();
             lbQtdNotas = new Label();
             label3 = new Label();
             btnRelXMLPDF = new MaterialSkin.Controls.MaterialButton();
@@ -72,6 +71,9 @@
             textDataIni = new MaskedTextBox();
             textDataFim = new MaskedTextBox();
             materialLabel9 = new MaterialSkin.Controls.MaterialLabel();
+            btnEnviarEmail = new MaterialSkin.Controls.MaterialButton();
+            nota = new DataGridViewTextBoxColumn();
+            serie = new DataGridViewTextBoxColumn();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
             ((System.ComponentModel.ISupportInitialize)novoDataGridView).BeginInit();
             SuspendLayout();
@@ -239,7 +241,7 @@
             // 
             // textDatabase
             // 
-            textDatabase.Location = new Point(286, 356);
+            textDatabase.Location = new Point(336, 359);
             textDatabase.Name = "textDatabase";
             textDatabase.Size = new Size(250, 23);
             textDatabase.TabIndex = 22;
@@ -305,18 +307,13 @@
             // novoDataGridView
             // 
             novoDataGridView.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            novoDataGridView.Columns.AddRange(new DataGridViewColumn[] { nota });
-            novoDataGridView.Location = new Point(635, 400);
+            novoDataGridView.Columns.AddRange(new DataGridViewColumn[] { nota, serie });
+            novoDataGridView.Location = new Point(574, 400);
             novoDataGridView.Name = "novoDataGridView";
             novoDataGridView.RowTemplate.Height = 25;
             novoDataGridView.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            novoDataGridView.Size = new Size(148, 180);
+            novoDataGridView.Size = new Size(206, 173);
             novoDataGridView.TabIndex = 37;
-            // 
-            // nota
-            // 
-            nota.HeaderText = "Nota Faltantes";
-            nota.Name = "nota";
             // 
             // lbQtdNotas
             // 
@@ -419,7 +416,7 @@
             btnTestarConexao.Depth = 0;
             btnTestarConexao.HighEmphasis = true;
             btnTestarConexao.Icon = null;
-            btnTestarConexao.Location = new Point(633, 359);
+            btnTestarConexao.Location = new Point(405, 537);
             btnTestarConexao.Margin = new Padding(4, 6, 4, 6);
             btnTestarConexao.MouseState = MaterialSkin.MouseState.HOVER;
             btnTestarConexao.Name = "btnTestarConexao";
@@ -430,6 +427,7 @@
             btnTestarConexao.Type = MaterialSkin.Controls.MaterialButton.MaterialButtonType.Contained;
             btnTestarConexao.UseAccentColor = false;
             btnTestarConexao.UseVisualStyleBackColor = true;
+            btnTestarConexao.Visible = false;
             btnTestarConexao.Click += btnTestarConexao_Click;
             // 
             // label2
@@ -600,12 +598,47 @@
             materialLabel9.Text = "Fim";
             materialLabel9.TextAlign = ContentAlignment.MiddleCenter;
             // 
+            // btnEnviarEmail
+            // 
+            btnEnviarEmail.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            btnEnviarEmail.Density = MaterialSkin.Controls.MaterialButton.MaterialButtonDensity.Default;
+            btnEnviarEmail.Depth = 0;
+            btnEnviarEmail.Enabled = false;
+            btnEnviarEmail.HighEmphasis = true;
+            btnEnviarEmail.Icon = null;
+            btnEnviarEmail.Location = new Point(635, 359);
+            btnEnviarEmail.Margin = new Padding(4, 6, 4, 6);
+            btnEnviarEmail.MouseState = MaterialSkin.MouseState.HOVER;
+            btnEnviarEmail.Name = "btnEnviarEmail";
+            btnEnviarEmail.NoAccentTextColor = Color.Empty;
+            btnEnviarEmail.Size = new Size(152, 36);
+            btnEnviarEmail.TabIndex = 60;
+            btnEnviarEmail.Text = "Enviar por EMAIL";
+            btnEnviarEmail.Type = MaterialSkin.Controls.MaterialButton.MaterialButtonType.Contained;
+            btnEnviarEmail.UseAccentColor = false;
+            btnEnviarEmail.UseVisualStyleBackColor = true;
+            btnEnviarEmail.Click += btnEnviarEmail_Click;
+            // 
+            // nota
+            // 
+            nota.HeaderText = "Nota Faltantes";
+            nota.Name = "nota";
+            // 
+            // serie
+            // 
+            serie.HeaderText = "Caixa";
+            serie.MaxInputLength = 10;
+            serie.Name = "serie";
+            serie.SortMode = DataGridViewColumnSortMode.NotSortable;
+            serie.Width = 60;
+            // 
             // FormPrincipal
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             AutoSizeMode = AutoSizeMode.GrowAndShrink;
             ClientSize = new Size(789, 601);
+            Controls.Add(btnEnviarEmail);
             Controls.Add(materialLabel9);
             Controls.Add(textDataFim);
             Controls.Add(textDataIni);
@@ -650,7 +683,7 @@
             Name = "FormPrincipal";
             Sizable = false;
             StartPosition = FormStartPosition.CenterScreen;
-            Text = "Extrair XML - SUPORTE AUTOCOM3";
+            Text = "Extrair XML - SUPORTE AUTOCOM3 - Versão: 1.0";
             ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
             ((System.ComponentModel.ISupportInitialize)novoDataGridView).EndInit();
             ResumeLayout(false);
@@ -677,7 +710,6 @@
         private TextBox textLogin;
         private MaterialSkin.Controls.MaterialLabel materialLabel1;
         private DataGridView novoDataGridView;
-        private DataGridViewTextBoxColumn nota;
         private Label lbQtdNotas;
         private Label label3;
         private MaterialSkin.Controls.MaterialButton btnRelXMLPDF;
@@ -702,5 +734,8 @@
         private MaskedTextBox textDataIni;
         private MaskedTextBox textDataFim;
         private MaterialSkin.Controls.MaterialLabel materialLabel9;
+        private MaterialSkin.Controls.MaterialButton btnEnviarEmail;
+        private DataGridViewTextBoxColumn nota;
+        private DataGridViewTextBoxColumn serie;
     }
 }

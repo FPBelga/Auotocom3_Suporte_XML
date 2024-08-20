@@ -10,6 +10,10 @@ using ClosedXML.Excel;
 using iTextSharp.text;
 using iTextSharp.text.pdf;
 using System.Globalization;
+using System.Net.Mail;
+using System.Diagnostics;
+using System.IO.Compression;
+using DocumentFormat.OpenXml.InkML;
 
 namespace Auotocom3_Suporte_XML
 {
@@ -18,7 +22,7 @@ namespace Auotocom3_Suporte_XML
         public FormPrincipal()
         {
             InitializeComponent();
-            
+
         }
 
         private void materialCheckbox1_CheckedChanged(object sender, EventArgs e)
@@ -44,7 +48,7 @@ namespace Auotocom3_Suporte_XML
             }
         }
 
-        private void btnCarregarDados_Click(object sender, EventArgs e)
+        public void btnCarregarDados_Click(object sender, EventArgs e)
         {
             textDatabase.Text = "";
             textDatabase.Text = "Autocom3_Filial_Movimento_Mensal_" + textAno.Text + "_" + textMes.Text;
@@ -52,7 +56,7 @@ namespace Auotocom3_Suporte_XML
             string connectionString = $"Data Source={textServidor.Text},{textPorta.Text};Initial Catalog={textDatabase.Text};User Id={textLogin.Text};Password={textSenha.Text};Integrated Security=True;Encrypt=False";
 
             string Caixa = textCaixas.Text;
-            string[] caixas = Caixa.Split(',').Select(c => c.Trim()).ToArray();
+            string[] caixas = Caixa.Split(',').Select(c => c.Trim()).ToArray(); // Definido aqui para estar disponível em todo o método
 
             DateTime dataInicio;
             DateTime dataFim;
@@ -129,44 +133,46 @@ namespace Auotocom3_Suporte_XML
                 }
 
                 int quantidadeArquivos = dataTable.Rows.Count;
+                
                 progressBarSalvando.Maximum = quantidadeArquivos;
                 progressBarSalvando.Value = 0;
+                
+                bool isFantasiaCapturada = false;  // Variável para controlar a captura da fantasia
+                string fantasia = null;  // Variável para armazenar o valor da tag <xFant>
+                
+                List<decimal> notasFaltantes = new List<decimal>();
+                
+                string caixaAtual = null;
+
+                //string pastaTemporaria = Path.Combine(pasta, "Temp");
+
+                //// Criação do diretório temporário
+                //if (Directory.Exists(pastaTemporaria))
+                //{
+                //    Directory.Delete(pastaTemporaria, true);
+                //}
+                //Directory.CreateDirectory(pastaTemporaria);
 
                 foreach (DataRow row in dataTable.Rows)
                 {
                     string conteudo = row["conteudo"].ToString();
                     string arquivo = row["arquivo"].ToString();
-                    string caixaAtual = row["caixa"].ToString();
+                    caixaAtual = row["caixa"].ToString();
 
                     XDocument xmlDoc = XDocument.Parse(conteudo);
 
                     XNamespace ns = xmlDoc.Root.GetDefaultNamespace();
 
-                    List<decimal> notasFaltantes = new List<decimal>();
-
-                    foreach (var elemento in xmlDoc.Descendants(ns + "nNF"))
+                    // Captura o valor da tag <xFant> somente no primeiro arquivo
+                    if (!isFantasiaCapturada)
                     {
-                        if (decimal.TryParse(elemento.Value, out decimal valorAtual))
+                        foreach (var elemento in xmlDoc.Descendants(ns + "xFant"))
                         {
-                            if (valorAnterior != 0)
-                            {
-                                if (valorAtual > valorAnterior + 1)
-                                {
-                                    for (decimal i = valorAnterior + 1; i < valorAtual; i++)
-                                    {
-                                        notasFaltantes.Add(i);
-                                    }
-                                }
-                            }
-
-                            valorAnterior = valorAtual;
+                            fantasia = elemento.Value;  // Obtém o valor da tag <xFant>
+                            isFantasiaCapturada = true; // Marca que o valor já foi capturado
+                            break;  // Interrompe o loop após capturar o valor
                         }
-                    }
-
-                    foreach (var notaFaltante in notasFaltantes)
-                    {
-                        novoDataGridView.Rows.Add(notaFaltante);
-                    }
+                    }                  
 
                     foreach (var elemento in xmlDoc.Descendants(ns + "mod"))
                     {
@@ -179,7 +185,7 @@ namespace Auotocom3_Suporte_XML
                             quantidadeMod65++;
                         }
                     }
-                    
+
                     foreach (var elemento in xmlDoc.Descendants(ns + "vNF"))
                     {
                         if (decimal.TryParse(elemento.Value, out decimal valor))
@@ -188,18 +194,53 @@ namespace Auotocom3_Suporte_XML
                         }
                     }
 
-                    string pastaCaixa = Path.Combine(pasta, caixaAtual);
-                    if (!Directory.Exists(pastaCaixa))
+                    string pastaDestino;
+
+                    if (materialCheckbox1.Checked)
                     {
-                        Directory.CreateDirectory(pastaCaixa);
+                        pastaDestino = Path.Combine(pasta, caixaAtual);
+                        if (!Directory.Exists(pastaDestino))
+                        {
+                            Directory.CreateDirectory(pastaDestino);
+                        }
+                    }
+                    else
+                    {
+                        pastaDestino = pasta;
                     }
 
-                    xmlDoc.Save(Path.Combine(pastaCaixa, $"{arquivo}.xml"));
+                    string caminhoArquivo = Path.Combine(pastaDestino, $"{arquivo}.xml");
 
+                    if (File.Exists(caminhoArquivo))
+                    {
+                        File.Delete(caminhoArquivo);
+                    }
+
+                    xmlDoc.Save(caminhoArquivo);                   
+
+                    foreach (var elemento in xmlDoc.Descendants(ns + "nNF"))
+                    {
+                        if (decimal.TryParse(elemento.Value, out decimal valorAtual))
+                        {
+                            if (valorAnterior != 0)
+                            {
+                                if (valorAtual > valorAnterior + 1)
+                                {
+                                    for (decimal i = valorAnterior + 1; i < valorAtual; i++)
+                                    {
+                                          notasFaltantes.Add(i);
+                                    }
+                                }
+                            }
+
+                            valorAnterior = valorAtual;
+                        }
+                    }
                     progressBarSalvando.Value += 1;
                     Application.DoEvents();
                 }
-
+                
+                // Atualiza a interface com os resultados
                 MessageBox.Show($"Finalizado com sucesso: {dataTable.Rows.Count} registros processados.");
                 lbTotalNfe.Visible = true;
                 lbTotalNfe.Text = quantidadeMod55.ToString();
@@ -208,24 +249,114 @@ namespace Auotocom3_Suporte_XML
                 lbQtdNotas.Visible = true;
                 lbQtdNotas.Text = dataTable.Rows.Count.ToString();
                 lblResultado.Visible = true;
-                // Divida o valor por 100 para ajustar a escala
+                progressBarSalvando.Value = 0;
+               
+                // Formata o valor total de VNF
                 decimal valorFormatado = somaVNF / 100;
                 lblResultado.Text = valorFormatado.ToString("N2", new CultureInfo("pt-BR"));
 
-                //dataTable.Columns.Remove("arquivo");
+                // Remove a coluna 'conteudo' e atualiza o DataGridView
                 dataTable.Columns.Remove("conteudo");
                 dataGridView1.DataSource = dataTable;
 
+              
+                string zipNome;
+
+                if (materialCheckbox1.Checked)
+                {
+                    zipNome = $"XML_{fantasia}_{textMes.Text}_{textAno.Text}_{string.Join("_", caixas)}.zip";
+                }
+                else
+                {
+                    zipNome = $"XML_{fantasia}_{textMes.Text}_{textAno.Text}_Completo.zip";
+                }
+
+                string zipPath = Path.Combine(pasta, zipNome);
+                string pastaCompleto = Path.Combine(pasta, "XMLCompleto");
+
+                try
+                {
+                    // Verifica se o arquivo ZIP já existe
+                    if (File.Exists(zipPath))
+                    {
+                        // Se existir, apaga o arquivo ZIP antigo
+                        File.Delete(zipPath);
+                    }
+
+                    // Cria a pasta "XMLCompleto" para armazenar os arquivos antes de compactar
+                    if (!Directory.Exists(pastaCompleto))
+                    {
+                        Directory.CreateDirectory(pastaCompleto);
+                    }
+
+                    // Mover ou copiar os arquivos para a pasta "XMLCompleto" antes da compactação
+                    if (!materialCheckbox1.Checked)
+                    {
+                        foreach (string file in Directory.GetFiles(pasta, "*.xml"))
+                        {
+                            string destFile = Path.Combine(pastaCompleto, Path.GetFileName(file));
+                            File.Move(file, destFile);
+                        }
+                    }
+
+                    // Configura a barra de progresso
+                    string[] arquivosParaCompactar = Directory.GetFiles(materialCheckbox1.Checked ? pasta : pastaCompleto, "*.xml", SearchOption.AllDirectories);
+                    progressBarSalvando.Maximum = arquivosParaCompactar.Length;
+                    progressBarSalvando.Value = 0;
+
+                    // Compacta a pasta ou arquivos dependendo do estado do checkbox
+                    if (materialCheckbox1.Checked)
+                    {
+                        foreach (string caixa in caixas)
+                        {
+                            string pastaCaixa = Path.Combine(pasta, caixa);
+                            if (Directory.Exists(pastaCaixa))
+                            {
+                                ZipFile.CreateFromDirectory(pastaCaixa, zipPath);
+                                Directory.Delete(pastaCaixa, true);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        // Compacta a pasta "XMLCompleto"
+                        using (ZipArchive zip = ZipFile.Open(zipPath, ZipArchiveMode.Create))
+                        {
+                            foreach (string file in arquivosParaCompactar)
+                            {
+                                zip.CreateEntryFromFile(file, Path.GetFileName(file));
+                                progressBarSalvando.Value += 1;
+                                Application.DoEvents();
+                            }
+                        }
+
+                        // Após compactação, exclui a pasta "XMLCompleto" e seus arquivos
+                        Directory.Delete(pastaCompleto, true);
+                    }
+
+                    MessageBox.Show("Arquivos compactados e ZIP criado com sucesso!");
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Ocorreu um erro ao tentar compactar os arquivos: {ex.Message}");
+                }
+
+                // Habilita os botões relacionados a relatórios e envio de e-mail
                 btnRelXMLPDF.Enabled = true;
                 btnRelXMLEXCEL.Enabled = true;
                 btnRelFaltntesLPDF.Enabled = true;
                 btnRelFaltntesLEXCEL.Enabled = true;
+                btnEnviarEmail.Enabled = true;
+
+
+                //foreach (var notaFaltante in notasFaltantes)
+                //{
+                //    novoDataGridView.Rows.Add(notaFaltante, caixaAtual);
+                //}
             }
+
         }
-
-
-
-        // Função para filtrar as colunas do DataGridView
+            // Função para filtrar as colunas do DataGridView
         public DataTable GetFilteredDataTable(DataGridView dgv)
         {
             DataTable dt = new DataTable();
@@ -296,11 +427,11 @@ namespace Auotocom3_Suporte_XML
                             {
                                 table.AddCell(new Phrase(cell.Value?.ToString()));
                             }
-                        }                       
+                        }
 
                         // Adicionar a tabela ao documento
                         doc.Add(table);
-                       
+
                         // Adicionando os Totais
                         doc.Add(new Paragraph("                                                                           " +
                             "                    TOTAL = " + lblResultado.Text));
@@ -460,11 +591,58 @@ namespace Auotocom3_Suporte_XML
 
         private void button1_Click(object sender, EventArgs e)
         {
-            
             textSenha.Enabled = !textLogin.Enabled;
             textServidor.Enabled = !textServidor.Enabled;
             textPorta.Enabled = !textPorta.Enabled;
             textLogin.Enabled = !textLogin.Enabled;
+        }
+
+        private void btnEnviarEmail_Click(object sender, EventArgs e)
+        {
+            // Abre uma caixa de entrada para o usuário inserir o e-mail
+            string emailDestino = Microsoft.VisualBasic.Interaction.InputBox("Digite o e-mail para envio:", "Enviar Arquivos por E-mail", "");
+
+            // Verifica se o e-mail foi inserido
+            if (string.IsNullOrWhiteSpace(emailDestino))
+            {
+                MessageBox.Show("E-mail não foi inserido. Operação cancelada.");
+                return;
+            }
+
+            try
+            {
+
+                // Caminho onde os arquivos estão salvos
+                string caminhoArquivos = "";
+                using (var fbd = new FolderBrowserDialog())
+                {
+                    DialogResult result = fbd.ShowDialog();
+                    if (result == DialogResult.OK && !string.IsNullOrWhiteSpace(fbd.SelectedPath))
+                    {
+                        caminhoArquivos = fbd.SelectedPath;
+                    }
+                    else
+                    {
+                        MessageBox.Show("Nenhuma pasta selecionada. Operação cancelada.");
+                        return;
+                    }
+                }                
+                string[] arquivos = Directory.GetFiles(caminhoArquivos);
+
+                // Constrói a string para anexar os arquivos (precisa estar na forma de file://)
+                string anexos = string.Join(",", arquivos.Select(a => "file:///" + Uri.EscapeUriString(a.Replace('\\', '/'))));
+
+                // Constrói a string mailto
+                string mailto = $"mailto:{emailDestino}?subject=Arquivos Gerados&body=Em anexo estão os arquivos gerados.&attachment={anexos}";
+
+                // Abre o cliente de e-mail padrão
+                System.Diagnostics.Process.Start(mailto);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Erro ao abrir o gerenciador de e-mails: {ex.Message}");
+            }
+            //Abre uma caixa de entrada para o usuário inserir o e - mail
 
         }
     }
