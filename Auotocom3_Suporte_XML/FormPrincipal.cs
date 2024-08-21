@@ -14,15 +14,21 @@ using System.Net.Mail;
 using System.Diagnostics;
 using System.IO.Compression;
 using DocumentFormat.OpenXml.InkML;
+using System.Net;
+using System.Net.Mail;
+using System.Text;
+using Autocom3_Suporte_XML;
 
 namespace Auotocom3_Suporte_XML
 {
     public partial class FormPrincipal : MaterialForm
     {
+        public TextBox textMes;
+        public TextBox textAno;
+        public string fantasia;  // Variável para armazenar o valor da tag <xFant>
         public FormPrincipal()
         {
-            InitializeComponent();
-
+            InitializeComponent();            
         }
 
         private void materialCheckbox1_CheckedChanged(object sender, EventArgs e)
@@ -46,8 +52,9 @@ namespace Auotocom3_Suporte_XML
             {
                 MessageBox.Show($"Erro na conexão: {ex.Message}");
             }
-        }
-
+        }      
+       
+       
         public void btnCarregarDados_Click(object sender, EventArgs e)
         {
             textDatabase.Text = "";
@@ -60,31 +67,35 @@ namespace Auotocom3_Suporte_XML
 
             DateTime dataInicio;
             DateTime dataFim;
-            bool isDataInicioValida = DateTime.TryParseExact(textDataIni.Text, "yyyy/MM/dd", null, System.Globalization.DateTimeStyles.None, out dataInicio);
-            bool isDataFimValida = DateTime.TryParseExact(textDataFim.Text, "yyyy/MM/dd", null, System.Globalization.DateTimeStyles.None, out dataFim);
+            bool isDataInicioValida = DateTime.TryParseExact(textDataIni.Text, "dd/MM/yyyy", null, System.Globalization.DateTimeStyles.None, out dataInicio);
+            bool isDataFimValida = DateTime.TryParseExact(textDataFim.Text, "dd/MM/yyyy", null, System.Globalization.DateTimeStyles.None, out dataFim);
 
             if (!string.IsNullOrEmpty(textDataIni.Text) && !isDataInicioValida)
             {
-                MessageBox.Show("A data de início não está no formato correto (yyyy/MM/dd).");
+                MessageBox.Show("A data de início não está no formato correto (dd/MM/yyyy).");
                 return;
             }
 
             if (!string.IsNullOrEmpty(textDataFim.Text) && !isDataFimValida)
             {
-                MessageBox.Show("A data de fim não está no formato correto (yyyy/MM/dd).");
+                MessageBox.Show("A data de fim não está no formato correto (dd/MM/yyyy).");
                 return;
             }
+
+            // Conversão das datas para o formato "yyyy-MM-dd"
+            string dataInicioFormatada = dataInicio.ToString("yyyy-MM-dd");
+            string dataFimFormatada = dataFim.ToString("yyyy-MM-dd");
 
             string query = "SELECT chavenfe, arquivo, caixa, data, conteudo FROM repositorio_de_xml WHERE 1=1";
 
             if (isDataInicioValida)
             {
-                query += " AND data >= @dataInicio";
+                query += " AND data >= @dataInicioFormatada";
             }
 
             if (isDataFimValida)
             {
-                query += " AND data <= @dataFim";
+                query += " AND data <= @dataFimFormatada";
             }
 
             if (materialCheckbox1.Checked && caixas.Any())
@@ -98,12 +109,12 @@ namespace Auotocom3_Suporte_XML
 
                 if (isDataInicioValida)
                 {
-                    adapter.SelectCommand.Parameters.AddWithValue("@dataInicio", dataInicio);
+                    adapter.SelectCommand.Parameters.AddWithValue("@dataInicioFormatada", dataInicioFormatada);
                 }
 
                 if (isDataFimValida)
                 {
-                    adapter.SelectCommand.Parameters.AddWithValue("@dataFim", dataFim);
+                    adapter.SelectCommand.Parameters.AddWithValue("@dataFimFormatada", dataFimFormatada);
                 }
 
                 DataTable dataTable = new DataTable();
@@ -137,21 +148,12 @@ namespace Auotocom3_Suporte_XML
                 progressBarSalvando.Maximum = quantidadeArquivos;
                 progressBarSalvando.Value = 0;
                 
-                bool isFantasiaCapturada = false;  // Variável para controlar a captura da fantasia
-                string fantasia = null;  // Variável para armazenar o valor da tag <xFant>
+                bool isFantasiaCapturada = false;  // Variável para controlar a captura da fantasia               
                 
                 List<decimal> notasFaltantes = new List<decimal>();
                 
                 string caixaAtual = null;
-
-                //string pastaTemporaria = Path.Combine(pasta, "Temp");
-
-                //// Criação do diretório temporário
-                //if (Directory.Exists(pastaTemporaria))
-                //{
-                //    Directory.Delete(pastaTemporaria, true);
-                //}
-                //Directory.CreateDirectory(pastaTemporaria);
+               
 
                 foreach (DataRow row in dataTable.Rows)
                 {
@@ -315,6 +317,8 @@ namespace Auotocom3_Suporte_XML
                                 ZipFile.CreateFromDirectory(pastaCaixa, zipPath);
                                 Directory.Delete(pastaCaixa, true);
                             }
+                            progressBarSalvando.Value += 1;
+                            Application.DoEvents();
                         }
                     }
                     else
@@ -347,13 +351,14 @@ namespace Auotocom3_Suporte_XML
                 btnRelFaltntesLPDF.Enabled = true;
                 btnRelFaltntesLEXCEL.Enabled = true;
                 btnEnviarEmail.Enabled = true;
+              
 
 
-                //foreach (var notaFaltante in notasFaltantes)
-                //{
-                //    novoDataGridView.Rows.Add(notaFaltante, caixaAtual);
-                //}
-            }
+        //foreach (var notaFaltante in notasFaltantes)
+        //{
+        //    novoDataGridView.Rows.Add(notaFaltante, caixaAtual);
+        //}
+    }
 
         }
             // Função para filtrar as colunas do DataGridView
@@ -599,50 +604,10 @@ namespace Auotocom3_Suporte_XML
 
         private void btnEnviarEmail_Click(object sender, EventArgs e)
         {
-            // Abre uma caixa de entrada para o usuário inserir o e-mail
-            string emailDestino = Microsoft.VisualBasic.Interaction.InputBox("Digite o e-mail para envio:", "Enviar Arquivos por E-mail", "");
 
-            // Verifica se o e-mail foi inserido
-            if (string.IsNullOrWhiteSpace(emailDestino))
-            {
-                MessageBox.Show("E-mail não foi inserido. Operação cancelada.");
-                return;
-            }
-
-            try
-            {
-
-                // Caminho onde os arquivos estão salvos
-                string caminhoArquivos = "";
-                using (var fbd = new FolderBrowserDialog())
-                {
-                    DialogResult result = fbd.ShowDialog();
-                    if (result == DialogResult.OK && !string.IsNullOrWhiteSpace(fbd.SelectedPath))
-                    {
-                        caminhoArquivos = fbd.SelectedPath;
-                    }
-                    else
-                    {
-                        MessageBox.Show("Nenhuma pasta selecionada. Operação cancelada.");
-                        return;
-                    }
-                }                
-                string[] arquivos = Directory.GetFiles(caminhoArquivos);
-
-                // Constrói a string para anexar os arquivos (precisa estar na forma de file://)
-                string anexos = string.Join(",", arquivos.Select(a => "file:///" + Uri.EscapeUriString(a.Replace('\\', '/'))));
-
-                // Constrói a string mailto
-                string mailto = $"mailto:{emailDestino}?subject=Arquivos Gerados&body=Em anexo estão os arquivos gerados.&attachment={anexos}";
-
-                // Abre o cliente de e-mail padrão
-                System.Diagnostics.Process.Start(mailto);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Erro ao abrir o gerenciador de e-mails: {ex.Message}");
-            }
-            //Abre uma caixa de entrada para o usuário inserir o e - mail
+            //FormPrincipal formPrincipal = new FormPrincipal();
+            FormEnviaEmail formEnviaEmail = new FormEnviaEmail(this);
+            formEnviaEmail.ShowDialog();
 
         }
     }

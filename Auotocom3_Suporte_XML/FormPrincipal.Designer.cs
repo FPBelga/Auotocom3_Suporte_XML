@@ -49,6 +49,8 @@
             textLogin = new TextBox();
             materialLabel1 = new MaterialSkin.Controls.MaterialLabel();
             novoDataGridView = new DataGridView();
+            nota = new DataGridViewTextBoxColumn();
+            serie = new DataGridViewTextBoxColumn();
             lbQtdNotas = new Label();
             label3 = new Label();
             btnRelXMLPDF = new MaterialSkin.Controls.MaterialButton();
@@ -72,8 +74,6 @@
             textDataFim = new MaskedTextBox();
             materialLabel9 = new MaterialSkin.Controls.MaterialLabel();
             btnEnviarEmail = new MaterialSkin.Controls.MaterialButton();
-            nota = new DataGridViewTextBoxColumn();
-            serie = new DataGridViewTextBoxColumn();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
             ((System.ComponentModel.ISupportInitialize)novoDataGridView).BeginInit();
             SuspendLayout();
@@ -314,6 +314,19 @@
             novoDataGridView.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             novoDataGridView.Size = new Size(206, 173);
             novoDataGridView.TabIndex = 37;
+            // 
+            // nota
+            // 
+            nota.HeaderText = "Nota Faltantes";
+            nota.Name = "nota";
+            // 
+            // serie
+            // 
+            serie.HeaderText = "Caixa";
+            serie.MaxInputLength = 10;
+            serie.Name = "serie";
+            serie.SortMode = DataGridViewColumnSortMode.NotSortable;
+            serie.Width = 60;
             // 
             // lbQtdNotas
             // 
@@ -619,19 +632,6 @@
             btnEnviarEmail.UseVisualStyleBackColor = true;
             btnEnviarEmail.Click += btnEnviarEmail_Click;
             // 
-            // nota
-            // 
-            nota.HeaderText = "Nota Faltantes";
-            nota.Name = "nota";
-            // 
-            // serie
-            // 
-            serie.HeaderText = "Caixa";
-            serie.MaxInputLength = 10;
-            serie.Name = "serie";
-            serie.SortMode = DataGridViewColumnSortMode.NotSortable;
-            serie.Width = 60;
-            // 
             // FormPrincipal
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -726,8 +726,8 @@
         private MaterialSkin.Controls.MaterialButton btnRelFaltntesLPDF;
         private DataGridViewTextBoxColumn Chave;
         private DataGridViewTextBoxColumn Caixa;
-        private TextBox textAno;
-        private TextBox textMes;
+       // private TextBox textAno;
+        //private TextBox textMes;
         private MaterialSkin.Controls.MaterialLabel materialLabel7;
         private Button button1;
         private MaterialSkin.Controls.MaterialLabel materialLabel8;
