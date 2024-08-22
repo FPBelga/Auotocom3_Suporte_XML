@@ -1,8 +1,4 @@
-﻿using System;
-using System.Data;
-using System.IO;
-using System.Linq;
-using System.Windows.Forms;
+﻿using System.Data;
 using System.Xml.Linq;
 using MaterialSkin.Controls;
 using Microsoft.Data.SqlClient;
@@ -10,17 +6,12 @@ using ClosedXML.Excel;
 using iTextSharp.text;
 using iTextSharp.text.pdf;
 using System.Globalization;
-using System.Net.Mail;
-using System.Diagnostics;
 using System.IO.Compression;
-using DocumentFormat.OpenXml.InkML;
-using System.Net;
-using System.Net.Mail;
-using System.Text;
 using Autocom3_Suporte_XML;
 using MaterialSkin;
 using System.IO.Compression;
 using iTextSharp.text;
+using System.Diagnostics;
 
 namespace Auotocom3_Suporte_XML
 {
@@ -40,7 +31,6 @@ namespace Auotocom3_Suporte_XML
             textDataFim.KeyDown += new KeyEventHandler(textBox_KeyDown);
             btnCarregarDados.KeyDown += new KeyEventHandler(textBox_KeyDown);
             lblResultado.ForeColor = Color.Red; // Altera a cor do texto para vermelho
-
             MaterialSkinManager materialSkinManager = MaterialSkinManager.Instance;
             materialSkinManager.AddFormToManage(this);
             materialSkinManager.Theme = MaterialSkinManager.Themes.LIGHT;
@@ -48,11 +38,14 @@ namespace Auotocom3_Suporte_XML
             materialSkinManager.ColorScheme = new ColorScheme(
                 Primary.DeepPurple700, Primary.DeepPurple700,
                 Primary.DeepPurple700, Accent.DeepPurple700,
-                TextShade.WHITE            
-                
+                TextShade.WHITE
+
             );
         }
-
+        private void novoDataGridView_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            throw new NotImplementedException();
+        }
         private void materialCheckbox1_CheckedChanged(object sender, EventArgs e)
         {
             textCaixas.Enabled = materialCheckbox1.Checked;
@@ -74,9 +67,9 @@ namespace Auotocom3_Suporte_XML
             {
                 MessageBox.Show($"Erro na conexão: {ex.Message}");
             }
-        }      
-       
-       
+        }
+
+
         public void btnCarregarDados_Click(object sender, EventArgs e)
         {
             textDatabase.Text = "";
@@ -122,8 +115,11 @@ namespace Auotocom3_Suporte_XML
 
             if (materialCheckbox1.Checked && caixas.Any())
             {
-                query += $" AND caixa IN ({string.Join(",", caixas.Select(c => $"'{c}'"))})";
+                query += $" AND caixa IN ({string.Join(",", caixas.Select(c => $"'{c}'"))} )";
             }
+
+            // Adiciona a cláusula ORDER BY ao final da consulta
+            query += " ORDER BY arquivo ASC";
 
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
@@ -146,10 +142,10 @@ namespace Auotocom3_Suporte_XML
                 decimal valorAnterior = 0;
                 string pasta = "";
 
-                int quantidadeMod55 = 0;
-                int quantidadeMod65 = 0;
+                int totalNotas = 0;
 
-                novoDataGridView.Rows.Clear();
+                int quantidadeMod55 = 0;
+                int quantidadeMod65 = 0;                
 
                 using (var fbd = new FolderBrowserDialog())
                 {
@@ -166,16 +162,16 @@ namespace Auotocom3_Suporte_XML
                 }
 
                 int quantidadeArquivos = dataTable.Rows.Count;
-                
+
                 progressBarSalvando.Maximum = quantidadeArquivos;
                 progressBarSalvando.Value = 0;
-                
+
                 bool isFantasiaCapturada = false;  // Variável para controlar a captura da fantasia               
-                
+
                 List<decimal> notasFaltantes = new List<decimal>();
-                
+
                 string caixaAtual = null;
-               
+
 
                 foreach (DataRow row in dataTable.Rows)
                 {
@@ -185,7 +181,33 @@ namespace Auotocom3_Suporte_XML
 
                     XDocument xmlDoc = XDocument.Parse(conteudo);
 
-                    XNamespace ns = xmlDoc.Root.GetDefaultNamespace();
+                    XNamespace ns = xmlDoc.Root.GetDefaultNamespace();                   
+
+                    // Verifica os valores de <nNF>
+                    foreach (var elemento in xmlDoc.Descendants(ns + "nNF"))
+                    {
+                        if (decimal.TryParse(elemento.Value, out decimal valorAtual))
+                        {
+                            // Adiciona os valores faltantes ao DataGridView
+                            if (valorAnterior != 0 && valorAtual > valorAnterior + 1)
+                            {
+                                for (decimal i = valorAnterior + 1; i < valorAtual; i++)
+                                {
+                                    // Adiciona ao novo DataGridView todas as notas faltantes
+                                    dataGridView2.Rows.Add(i, caixaAtual);
+                                    totalNotas++; // Incrementa o total de notas
+                                    // Debug.WriteLine($"Adicionando nota faltante: {i} - {Caixa}"); // Depuração
+                                }
+                            }                            
+
+                            // Atualiza o valor anterior
+                            valorAnterior = valorAtual;
+                     
+                        }
+                    }
+                    labelTotalNotas.Text = totalNotas.ToString();
+                    // Atualiza o DataGridView para garantir que os dados sejam exibidos
+                    dataGridView2.Refresh();
 
                     // Captura o valor da tag <xFant> somente no primeiro arquivo
                     if (!isFantasiaCapturada)
@@ -196,7 +218,7 @@ namespace Auotocom3_Suporte_XML
                             isFantasiaCapturada = true; // Marca que o valor já foi capturado
                             break;  // Interrompe o loop após capturar o valor
                         }
-                    }                  
+                    }
 
                     foreach (var elemento in xmlDoc.Descendants(ns + "mod"))
                     {
@@ -216,7 +238,9 @@ namespace Auotocom3_Suporte_XML
                         {
                             somaVNF += valor;
                         }
-                    }
+                    }                 
+
+                    
 
                     string pastaDestino;
 
@@ -240,30 +264,14 @@ namespace Auotocom3_Suporte_XML
                         File.Delete(caminhoArquivo);
                     }
 
-                    xmlDoc.Save(caminhoArquivo);                   
+                    xmlDoc.Save(caminhoArquivo);
 
-                    foreach (var elemento in xmlDoc.Descendants(ns + "nNF"))
-                    {
-                        if (decimal.TryParse(elemento.Value, out decimal valorAtual))
-                        {
-                            if (valorAnterior != 0)
-                            {
-                                if (valorAtual > valorAnterior + 1)
-                                {
-                                    for (decimal i = valorAnterior + 1; i < valorAtual; i++)
-                                    {
-                                          notasFaltantes.Add(i);
-                                    }
-                                }
-                            }
+                    //VerificarNotasFaltantes(dataTable, novoDataGridView);
 
-                            valorAnterior = valorAtual;
-                        }
-                    }
                     progressBarSalvando.Value += 1;
                     Application.DoEvents();
                 }
-                
+
                 // Atualiza a interface com os resultados
                 MessageBox.Show($"Finalizado com sucesso: {dataTable.Rows.Count} registros processados.");
                 lbTotalNfe.Visible = true;
@@ -275,7 +283,7 @@ namespace Auotocom3_Suporte_XML
                 lblResultado.Visible = true;
                 lblResultado.ForeColor = Color.Red;
                 progressBarSalvando.Value = 0;
-               
+
                 // Formata o valor total de VNF
                 decimal valorFormatado = somaVNF / 100;
                 lblResultado.Text = valorFormatado.ToString("N2", new CultureInfo("pt-BR"));
@@ -285,7 +293,7 @@ namespace Auotocom3_Suporte_XML
                 dataTable.Columns.Remove("arquivo");
                 dataGridView1.DataSource = dataTable;
 
-              
+
                 string zipNome;
 
                 if (materialCheckbox1.Checked)
@@ -375,46 +383,9 @@ namespace Auotocom3_Suporte_XML
                 btnRelFaltntesLPDF.Enabled = true;
                 btnRelFaltntesLEXCEL.Enabled = true;
                 btnEnviarEmail.Enabled = true;
-              
-
-
-        //foreach (var notaFaltante in notasFaltantes)
-        //{
-        //    novoDataGridView.Rows.Add(notaFaltante, caixaAtual);
-        //}
-    }
-
-        }
-            // Função para filtrar as colunas do DataGridView
-        public DataTable GetFilteredDataTable(DataGridView dgv)
-        {
-            DataTable dt = new DataTable();
-
-            // Adiciona as colunas do DataGridView exceto "arquivo" e "conteúdo"
-            foreach (DataGridViewColumn column in dgv.Columns)
-            {
-                if (column.Name != "arquivo" && column.Name != "conteudo")
-                {
-                    dt.Columns.Add(column.Name, column.ValueType);
-                }
             }
 
-            // Adiciona as linhas
-            foreach (DataGridViewRow row in dgv.Rows)
-            {
-                DataRow dr = dt.NewRow();
-                foreach (DataGridViewColumn column in dgv.Columns)
-                {
-                    if (column.Name != "arquivo" && column.Name != "conteudo")
-                    {
-                        dr[column.Name] = row.Cells[column.Name].Value;
-                    }
-                }
-                dt.Rows.Add(dr);
-            }
-
-            return dt;
-        }
+        }        
         private void btnRelXMLPDF_Click_1(object sender, EventArgs e)
         {
             using (SaveFileDialog saveFileDialog = new SaveFileDialog())
@@ -465,7 +436,7 @@ namespace Auotocom3_Suporte_XML
                                 {
                                     table.AddCell(new Phrase(cell.Value?.ToString(), FontFactory.GetFont(FontFactory.HELVETICA, 08)));
                                 }
-                            
+
                             }
 
                             // Adicionar a tabela ao documento
@@ -541,43 +512,65 @@ namespace Auotocom3_Suporte_XML
             {
                 saveFileDialog.Filter = "PDF Files|*.pdf";
                 saveFileDialog.Title = "Salvar Relatório em PDF";
-                saveFileDialog.FileName = "RelatorioDasNotasFaltantes.pdf";
+                saveFileDialog.FileName = "Relatório dos XMLs Faltantes.pdf";
+                
 
                 if (saveFileDialog.ShowDialog() == DialogResult.OK)
                 {
+                    string caminhoPDF = saveFileDialog.FileName;
+
                     try
                     {
-                        string caminhoPDF = saveFileDialog.FileName;
-
                         // Criar documento PDF
-                        Document doc = new Document();
-                        PdfWriter.GetInstance(doc, new FileStream(caminhoPDF, FileMode.Create));
-                        doc.Open();
-
-                        // Adicionar título ao documento
-                        doc.Add(new Paragraph("Relatório das Notas Faltantes"));
-
-                        // Criar tabela PDF
-                        PdfPTable table = new PdfPTable(novoDataGridView.Columns.Count);
-
-                        // Adicionar cabeçalhos
-                        foreach (DataGridViewColumn column in novoDataGridView.Columns)
+                        using (Document doc = new Document())
                         {
-                            table.AddCell(new Phrase(column.HeaderText));
-                        }
+                            PdfWriter.GetInstance(doc, new FileStream(caminhoPDF, FileMode.Create));
+                            doc.Open();
 
-                        // Adicionar linhas de dados
-                        foreach (DataGridViewRow row in novoDataGridView.Rows)
-                        {
-                            foreach (DataGridViewCell cell in row.Cells)
+                            // Adicionar título ao documento com formatação
+                            Paragraph titulo = new Paragraph("Relatório dos XMLs Faltantes",
+                                FontFactory.GetFont(FontFactory.HELVETICA, 12, iTextSharp.text.Font.BOLD));
+                            titulo.Alignment = Element.ALIGN_CENTER;
+                            doc.Add(titulo);
+
+                            doc.Add(new Paragraph("\n")); // Adicionar espaço em branco
+
+                            // Criar tabela PDF com o número de colunas correspondente ao DataGridView
+                            PdfPTable table = new PdfPTable(dataGridView2.Columns.Count);
+
+                            // Definir largura das colunas (ajuste os valores conforme necessário)
+                            float[] columnWidths = new float[] { 2f, 1f}; // exemplo de larguras personalizadas
+                            table.SetWidths(columnWidths);
+
+                            // Adicionar cabeçalhos
+                            foreach (DataGridViewColumn column in dataGridView2.Columns)
                             {
-                                table.AddCell(new Phrase(cell.Value?.ToString()));
+                                PdfPCell cell = new PdfPCell(new Phrase(column.HeaderText));
+                                cell.BackgroundColor = BaseColor.LIGHT_GRAY; // Define cor de fundo para o cabeçalho
+                                table.AddCell(cell);
                             }
-                        }
 
-                        // Adicionar a tabela ao documento
-                        doc.Add(table);
-                        doc.Close();
+                            // Adicionar linhas de dados
+                            foreach (DataGridViewRow row in dataGridView2.Rows)
+                            {
+                                foreach (DataGridViewCell cell in row.Cells)
+                                {
+                                    table.AddCell(new Phrase(cell.Value?.ToString(), FontFactory.GetFont(FontFactory.HELVETICA, 08)));
+                                }
+                                
+                            }
+
+                            // Adicionar a tabela ao documento
+                            doc.Add(table);
+
+                            // Adicionar o total ao final
+                            Paragraph total = new Paragraph($"TOTAL DE NOTAS = {labelTotalNotas.Text}",
+                                FontFactory.GetFont(FontFactory.HELVETICA, 12, iTextSharp.text.Font.BOLD));
+                            total.Alignment = Element.ALIGN_CENTER;
+                            doc.Add(total);
+
+                            doc.Close(); // Certifique-se de que o documento seja fechado corretamente
+                        }
 
                         MessageBox.Show("Relatório PDF gerado com sucesso!");
                     }
@@ -612,17 +605,17 @@ namespace Auotocom3_Suporte_XML
             var worksheet = workbook.Worksheets.Add("Relatório de XML baixados");
 
             // Adicionar cabeçalhos
-            for (int i = 0; i < novoDataGridView.Columns.Count; i++)
+            for (int i = 0; i < dataGridView2.Columns.Count; i++)
             {
-                worksheet.Cell(1, i + 1).Value = novoDataGridView.Columns[i].HeaderText;
+                worksheet.Cell(1, i + 1).Value = dataGridView2.Columns[i].HeaderText;
             }
 
             // Adicionar linhas de dados
-            for (int i = 0; i < novoDataGridView.Rows.Count; i++)
+            for (int i = 0; i < dataGridView2.Rows.Count; i++)
             {
-                for (int j = 0; j < novoDataGridView.Columns.Count; j++)
+                for (int j = 0; j < dataGridView2.Columns.Count; j++)
                 {
-                    worksheet.Cell(i + 2, j + 1).Value = novoDataGridView.Rows[i].Cells[j].Value?.ToString();
+                    worksheet.Cell(i + 2, j + 1).Value = dataGridView2.Rows[i].Cells[j].Value?.ToString();
                 }
             }
 
@@ -642,92 +635,60 @@ namespace Auotocom3_Suporte_XML
 
         private void btnEnviarEmail_Click(object sender, EventArgs e)
         {
-
-            //FormPrincipal formPrincipal = new FormPrincipal();
             FormEnviaEmail formEnviaEmail = new FormEnviaEmail(this);
             formEnviaEmail.ShowDialog();
+        }
 
+        private void VerificarNotasFaltantes(DataTable dataTable, DataGridView novoDataGridView)
+        {
+            
+                 decimal valorAnterior = 0;
 
-            //// Abre uma caixa de entrada para o usuário inserir o e-mail
-            //string emailDestino = Microsoft.VisualBasic.Interaction.InputBox("Digite o e-mail para envio:", "Enviar Arquivos por E-mail", "felipe.belga@autocom3.com.br").Trim();
+                // Limpa o DataGridView antes de adicionar novos valores
+                novoDataGridView.Rows.Clear();
 
-            //// Abre uma caixa de entrada para o usuário inserir o e-mail
-            //string emailRemetende = Microsoft.VisualBasic.Interaction.InputBox("Digite o e-mail AUTOCOM3:", "Enviar Arquivos por E-mail", "felipe.belga@autocom3.com.br").Trim();
+            string conteudo = null;
+            string arquivo = null;
 
-            //// Abre uma caixa de entrada para o usuário inserir o e-mail
-            //string senhaRemetende = Microsoft.VisualBasic.Interaction.InputBox("Digite senha do e-mail da AUTOCOM3:", "Enviar Arquivos por E-mail", "Ac3@110823").Trim();
+            try
+            {
+                foreach (DataRow row in dataTable.Rows)
+                {
+                    conteudo = row["conteudo"].ToString();
+                    arquivo = row["arquivo"].ToString();
 
-            //// Verifica se o e-mail foi inserido
-            //if (string.IsNullOrWhiteSpace(emailDestino))
-            //{
-            //    MessageBox.Show("E-mail não foi inserido. Operação cancelada.");
-            //    return;
-            //}
+                    // Carrega o conteúdo XML
+                    XDocument xmlDoc = XDocument.Parse(conteudo);
 
+                    // Verifica se há namespaces no documento
+                    XNamespace ns = xmlDoc.Root.GetDefaultNamespace();
 
-            //try
-            //{
-            //    // Configura o OpenFileDialog para permitir a seleção de múltiplos arquivos
-            //    using (OpenFileDialog ofd = new OpenFileDialog())
-            //    {
-            //        ofd.Multiselect = true;
-            //        ofd.Title = "Selecione os arquivos para anexar";
-            //        ofd.Filter = "Todos os Arquivos|*.*";
+                    // Verifica os valores de <nNF>
+                    foreach (var elemento in xmlDoc.Descendants(ns + "nNF"))
+                    {
+                        if (decimal.TryParse(elemento.Value, out decimal valorAtual))
+                        {
+                            // Se o valor anterior for diferente de zero e a diferença for maior que 1, temos notas faltantes
+                            if (valorAnterior != 0 && valorAtual > valorAnterior + 1)
+                            {
+                                // Adiciona ao novo DataGridView todas as notas faltantes
+                                for (decimal i = valorAnterior + 1; i < valorAtual; i++)
+                                {
+                                    novoDataGridView.Rows.Add(arquivo, i);
+                                }
+                            }
 
-            //        DialogResult result = ofd.ShowDialog();
-
-            //        // Verifica se o usuário selecionou arquivos
-            //        if (result == DialogResult.OK && ofd.FileNames.Length > 0)
-            //        {
-            //            // Configuração do cliente SMTP
-            //            SmtpClient smtpClient = new SmtpClient()
-            //            {
-            //                Host = "smtp.uni5.net",
-            //                UseDefaultCredentials = false, // vamos utilizar credencias especificas
-            //                Credentials = new NetworkCredential(emailRemetende.Trim(), senhaRemetende), // seu usuário e senha para autenticação
-            //                EnableSsl = false, // GMail requer SSL
-            //                Port = 587,      // porta para SSL
-            //                DeliveryMethod = SmtpDeliveryMethod.Network, // modo de envio
-
-            //            };
-
-            //            // Criação do e-mail
-            //            MailMessage mail = new MailMessage();
-            //            mail.From = new MailAddress(emailRemetende);
-            //            mail.To.Add(emailDestino);
-            //            mail.Subject = $"Arquivos XML gerados do mês de {textMes.Text}/{textAno.Text} para a empresa {fantasia}.";
-            //            mail.Body = $"Em anexo estão os arquivos XML gerados do mês de {textMes.Text}/{textAno.Text} para a empresa {fantasia}.";
-            //            mail.BodyEncoding = Encoding.GetEncoding("ISO-8859-1");
-            //            mail.Priority = MailPriority.Normal;
-
-            //            // Adiciona os arquivos como anexo
-            //            foreach (string arquivo in ofd.FileNames)
-            //            {
-            //                Attachment anexo = new Attachment(arquivo);
-            //                mail.Attachments.Add(anexo);
-            //            }
-
-            //            // Envia o e-mail
-            //            smtpClient.Send(mail);
-            //            MessageBox.Show("E-mail enviado com sucesso.");
-            //        }
-            //        else
-            //        {
-            //            MessageBox.Show("Nenhum arquivo selecionado. Operação cancelada.");
-            //            return;
-            //        }
-            //    }
-            //}
-            //catch (SmtpException smtpEx)
-            //{
-            //    MessageBox.Show($"Erro SMTP: {smtpEx.Message}");
-            //}
-            //catch (Exception ex)
-            //{
-            //    MessageBox.Show($"Erro ao enviar e-mail: {ex.Message}");
-            //}
-
-
+                            // Atualiza o valor anterior
+                            valorAnterior = valorAtual;
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // Caso ocorra um erro, exibe uma mensagem
+                MessageBox.Show($"Erro ao processar o arquivo {arquivo}: {ex.Message}");
+            }
         }
     }
 }
