@@ -18,6 +18,9 @@ using System.Net;
 using System.Net.Mail;
 using System.Text;
 using Autocom3_Suporte_XML;
+using MaterialSkin;
+using System.IO.Compression;
+using iTextSharp.text;
 
 namespace Auotocom3_Suporte_XML
 {
@@ -28,7 +31,26 @@ namespace Auotocom3_Suporte_XML
         public string fantasia;  // Variável para armazenar o valor da tag <xFant>
         public FormPrincipal()
         {
-            InitializeComponent();            
+            InitializeComponent();
+            // Atribua o evento KeyDown aos TextBoxes
+            textAno.KeyDown += new KeyEventHandler(textBox_KeyDown);
+            textMes.KeyDown += new KeyEventHandler(textBox_KeyDown);
+            textCaixas.KeyDown += new KeyEventHandler(textBox_KeyDown);
+            textDataIni.KeyDown += new KeyEventHandler(textBox_KeyDown);
+            textDataFim.KeyDown += new KeyEventHandler(textBox_KeyDown);
+            btnCarregarDados.KeyDown += new KeyEventHandler(textBox_KeyDown);
+            lblResultado.ForeColor = Color.Red; // Altera a cor do texto para vermelho
+
+            MaterialSkinManager materialSkinManager = MaterialSkinManager.Instance;
+            materialSkinManager.AddFormToManage(this);
+            materialSkinManager.Theme = MaterialSkinManager.Themes.LIGHT;
+            // Configure color schema
+            materialSkinManager.ColorScheme = new ColorScheme(
+                Primary.DeepPurple700, Primary.DeepPurple700,
+                Primary.DeepPurple700, Accent.DeepPurple700,
+                TextShade.WHITE            
+                
+            );
         }
 
         private void materialCheckbox1_CheckedChanged(object sender, EventArgs e)
@@ -251,6 +273,7 @@ namespace Auotocom3_Suporte_XML
                 lbQtdNotas.Visible = true;
                 lbQtdNotas.Text = dataTable.Rows.Count.ToString();
                 lblResultado.Visible = true;
+                lblResultado.ForeColor = Color.Red;
                 progressBarSalvando.Value = 0;
                
                 // Formata o valor total de VNF
@@ -259,6 +282,7 @@ namespace Auotocom3_Suporte_XML
 
                 // Remove a coluna 'conteudo' e atualiza o DataGridView
                 dataTable.Columns.Remove("conteudo");
+                dataTable.Columns.Remove("arquivo");
                 dataGridView1.DataSource = dataTable;
 
               
@@ -401,46 +425,60 @@ namespace Auotocom3_Suporte_XML
 
                 if (saveFileDialog.ShowDialog() == DialogResult.OK)
                 {
+                    string caminhoPDF = saveFileDialog.FileName;
+
                     try
                     {
-                        string caminhoPDF = saveFileDialog.FileName;
-
                         // Criar documento PDF
-                        Document doc = new Document();
-                        PdfWriter.GetInstance(doc, new FileStream(caminhoPDF, FileMode.Create));
-                        doc.Open();
-
-                        // Adicionar título ao documento
-                        doc.Add(new Paragraph("                             " +
-                            "                  Relatório dos XMLs Baixados"));
-                        doc.Add(new Paragraph(""));
-                        doc.Add(new Paragraph(""));
-
-                        // Criar tabela PDF
-                        PdfPTable table = new PdfPTable(dataGridView1.Columns.Count);
-
-                        // Adicionar cabeçalhos
-                        foreach (DataGridViewColumn column in dataGridView1.Columns)
+                        using (Document doc = new Document())
                         {
-                            table.AddCell(new Phrase(column.HeaderText));
-                        }
+                            PdfWriter.GetInstance(doc, new FileStream(caminhoPDF, FileMode.Create));
+                            doc.Open();
 
-                        // Adicionar linhas de dados
-                        foreach (DataGridViewRow row in dataGridView1.Rows)
-                        {
-                            foreach (DataGridViewCell cell in row.Cells)
+                            // Adicionar título ao documento com formatação
+                            Paragraph titulo = new Paragraph("Relatório dos XMLs Baixados",
+                                FontFactory.GetFont(FontFactory.HELVETICA, 12, iTextSharp.text.Font.BOLD));
+                            titulo.Alignment = Element.ALIGN_CENTER;
+                            doc.Add(titulo);
+
+                            doc.Add(new Paragraph("\n")); // Adicionar espaço em branco
+
+                            // Criar tabela PDF com o número de colunas correspondente ao DataGridView
+                            PdfPTable table = new PdfPTable(dataGridView1.Columns.Count);
+
+                            // Definir largura das colunas (ajuste os valores conforme necessário)
+                            float[] columnWidths = new float[] { 7f, 1f, 2f }; // exemplo de larguras personalizadas
+                            table.SetWidths(columnWidths);
+
+                            // Adicionar cabeçalhos
+                            foreach (DataGridViewColumn column in dataGridView1.Columns)
                             {
-                                table.AddCell(new Phrase(cell.Value?.ToString()));
+                                PdfPCell cell = new PdfPCell(new Phrase(column.HeaderText));
+                                cell.BackgroundColor = BaseColor.LIGHT_GRAY; // Define cor de fundo para o cabeçalho
+                                table.AddCell(cell);
                             }
+
+                            // Adicionar linhas de dados
+                            foreach (DataGridViewRow row in dataGridView1.Rows)
+                            {
+                                foreach (DataGridViewCell cell in row.Cells)
+                                {
+                                    table.AddCell(new Phrase(cell.Value?.ToString(), FontFactory.GetFont(FontFactory.HELVETICA, 08)));
+                                }
+                            
+                            }
+
+                            // Adicionar a tabela ao documento
+                            doc.Add(table);
+
+                            // Adicionar o total ao final
+                            Paragraph total = new Paragraph($"TOTAL = {lblResultado.Text}",
+                                FontFactory.GetFont(FontFactory.HELVETICA, 12, iTextSharp.text.Font.BOLD));
+                            total.Alignment = Element.ALIGN_RIGHT;
+                            doc.Add(total);
+
+                            doc.Close(); // Certifique-se de que o documento seja fechado corretamente
                         }
-
-                        // Adicionar a tabela ao documento
-                        doc.Add(table);
-
-                        // Adicionando os Totais
-                        doc.Add(new Paragraph("                                                                           " +
-                            "                    TOTAL = " + lblResultado.Text));
-                        doc.Close();
 
                         MessageBox.Show("Relatório PDF gerado com sucesso!");
                     }
@@ -608,6 +646,87 @@ namespace Auotocom3_Suporte_XML
             //FormPrincipal formPrincipal = new FormPrincipal();
             FormEnviaEmail formEnviaEmail = new FormEnviaEmail(this);
             formEnviaEmail.ShowDialog();
+
+
+            //// Abre uma caixa de entrada para o usuário inserir o e-mail
+            //string emailDestino = Microsoft.VisualBasic.Interaction.InputBox("Digite o e-mail para envio:", "Enviar Arquivos por E-mail", "felipe.belga@autocom3.com.br").Trim();
+
+            //// Abre uma caixa de entrada para o usuário inserir o e-mail
+            //string emailRemetende = Microsoft.VisualBasic.Interaction.InputBox("Digite o e-mail AUTOCOM3:", "Enviar Arquivos por E-mail", "felipe.belga@autocom3.com.br").Trim();
+
+            //// Abre uma caixa de entrada para o usuário inserir o e-mail
+            //string senhaRemetende = Microsoft.VisualBasic.Interaction.InputBox("Digite senha do e-mail da AUTOCOM3:", "Enviar Arquivos por E-mail", "Ac3@110823").Trim();
+
+            //// Verifica se o e-mail foi inserido
+            //if (string.IsNullOrWhiteSpace(emailDestino))
+            //{
+            //    MessageBox.Show("E-mail não foi inserido. Operação cancelada.");
+            //    return;
+            //}
+
+
+            //try
+            //{
+            //    // Configura o OpenFileDialog para permitir a seleção de múltiplos arquivos
+            //    using (OpenFileDialog ofd = new OpenFileDialog())
+            //    {
+            //        ofd.Multiselect = true;
+            //        ofd.Title = "Selecione os arquivos para anexar";
+            //        ofd.Filter = "Todos os Arquivos|*.*";
+
+            //        DialogResult result = ofd.ShowDialog();
+
+            //        // Verifica se o usuário selecionou arquivos
+            //        if (result == DialogResult.OK && ofd.FileNames.Length > 0)
+            //        {
+            //            // Configuração do cliente SMTP
+            //            SmtpClient smtpClient = new SmtpClient()
+            //            {
+            //                Host = "smtp.uni5.net",
+            //                UseDefaultCredentials = false, // vamos utilizar credencias especificas
+            //                Credentials = new NetworkCredential(emailRemetende.Trim(), senhaRemetende), // seu usuário e senha para autenticação
+            //                EnableSsl = false, // GMail requer SSL
+            //                Port = 587,      // porta para SSL
+            //                DeliveryMethod = SmtpDeliveryMethod.Network, // modo de envio
+
+            //            };
+
+            //            // Criação do e-mail
+            //            MailMessage mail = new MailMessage();
+            //            mail.From = new MailAddress(emailRemetende);
+            //            mail.To.Add(emailDestino);
+            //            mail.Subject = $"Arquivos XML gerados do mês de {textMes.Text}/{textAno.Text} para a empresa {fantasia}.";
+            //            mail.Body = $"Em anexo estão os arquivos XML gerados do mês de {textMes.Text}/{textAno.Text} para a empresa {fantasia}.";
+            //            mail.BodyEncoding = Encoding.GetEncoding("ISO-8859-1");
+            //            mail.Priority = MailPriority.Normal;
+
+            //            // Adiciona os arquivos como anexo
+            //            foreach (string arquivo in ofd.FileNames)
+            //            {
+            //                Attachment anexo = new Attachment(arquivo);
+            //                mail.Attachments.Add(anexo);
+            //            }
+
+            //            // Envia o e-mail
+            //            smtpClient.Send(mail);
+            //            MessageBox.Show("E-mail enviado com sucesso.");
+            //        }
+            //        else
+            //        {
+            //            MessageBox.Show("Nenhum arquivo selecionado. Operação cancelada.");
+            //            return;
+            //        }
+            //    }
+            //}
+            //catch (SmtpException smtpEx)
+            //{
+            //    MessageBox.Show($"Erro SMTP: {smtpEx.Message}");
+            //}
+            //catch (Exception ex)
+            //{
+            //    MessageBox.Show($"Erro ao enviar e-mail: {ex.Message}");
+            //}
+
 
         }
     }
