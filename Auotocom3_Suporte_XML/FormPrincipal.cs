@@ -183,7 +183,7 @@ namespace Auotocom3_Suporte_XML
 
                     XNamespace ns = xmlDoc.Root.GetDefaultNamespace();                   
 
-                    // Verifica os valores de <nNF>
+                    // Esta função pega o NF que não achar e armazena no Dbgridview2 <nNF> 
                     foreach (var elemento in xmlDoc.Descendants(ns + "nNF"))
                     {
                         if (decimal.TryParse(elemento.Value, out decimal valorAtual))
@@ -205,6 +205,7 @@ namespace Auotocom3_Suporte_XML
                      
                         }
                     }
+                    
                     labelTotalNotas.Text = totalNotas.ToString();
                     // Atualiza o DataGridView para garantir que os dados sejam exibidos
                     dataGridView2.Refresh();

@@ -6,7 +6,12 @@
     <Nullable>enable</Nullable>
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
+    <ApplicationIcon>autocom.ico</ApplicationIcon>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="autocom.ico" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="ClosedXML" Version="0.102.3" />
