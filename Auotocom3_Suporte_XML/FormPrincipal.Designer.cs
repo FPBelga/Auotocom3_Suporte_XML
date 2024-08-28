@@ -69,14 +69,16 @@
             label7 = new Label();
             label8 = new Label();
             lblResultado = new MaterialSkin.Controls.MaterialLabel();
-            Caixa = new DataGridViewTextBoxColumn();
-            Chave = new DataGridViewTextBoxColumn();
             dataGridView1 = new DataGridView();
+            Chave = new DataGridViewTextBoxColumn();
+            num_caixa = new DataGridViewTextBoxColumn();
             dataGridView2 = new DataGridView();
             NotaFaltante = new DataGridViewTextBoxColumn();
             CaixaFaltante = new DataGridViewTextBoxColumn();
             progressBarSalvando = new ProgressBar();
             labelTotalNotas = new Label();
+            materialButton1 = new MaterialSkin.Controls.MaterialButton();
+            label10 = new Label();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
             ((System.ComponentModel.ISupportInitialize)dataGridView2).BeginInit();
             SuspendLayout();
@@ -85,7 +87,7 @@
             // 
             label1.AutoSize = true;
             label1.Font = new Font("Arial Black", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            label1.Location = new Point(311, 529);
+            label1.Location = new Point(591, 551);
             label1.Name = "label1";
             label1.Size = new Size(110, 23);
             label1.TabIndex = 33;
@@ -192,14 +194,14 @@
             btnCarregarDados.Depth = 0;
             btnCarregarDados.HighEmphasis = true;
             btnCarregarDados.Icon = null;
-            btnCarregarDados.Location = new Point(88, 416);
+            btnCarregarDados.Location = new Point(19, 418);
             btnCarregarDados.Margin = new Padding(4, 6, 4, 6);
             btnCarregarDados.MouseState = MaterialSkin.MouseState.HOVER;
             btnCarregarDados.Name = "btnCarregarDados";
             btnCarregarDados.NoAccentTextColor = Color.Empty;
-            btnCarregarDados.Size = new Size(110, 36);
+            btnCarregarDados.Size = new Size(101, 36);
             btnCarregarDados.TabIndex = 7;
-            btnCarregarDados.Text = "Gerar XMLS";
+            btnCarregarDados.Text = "XMLS NCFe";
             btnCarregarDados.Type = MaterialSkin.Controls.MaterialButton.MaterialButtonType.Contained;
             btnCarregarDados.UseAccentColor = false;
             btnCarregarDados.UseVisualStyleBackColor = true;
@@ -275,7 +277,7 @@
             lbQtdNotas.AutoSize = true;
             lbQtdNotas.Font = new Font("Arial Black", 12F, FontStyle.Regular, GraphicsUnit.Point);
             lbQtdNotas.ForeColor = Color.Red;
-            lbQtdNotas.Location = new Point(431, 425);
+            lbQtdNotas.Location = new Point(711, 447);
             lbQtdNotas.Name = "lbQtdNotas";
             lbQtdNotas.Size = new Size(62, 23);
             lbQtdNotas.TabIndex = 39;
@@ -286,7 +288,7 @@
             // 
             label3.AutoSize = true;
             label3.Font = new Font("Arial Black", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            label3.Location = new Point(308, 425);
+            label3.Location = new Point(588, 447);
             label3.Name = "label3";
             label3.Size = new Size(109, 23);
             label3.TabIndex = 38;
@@ -318,7 +320,7 @@
             lbTotalNfe.AutoSize = true;
             lbTotalNfe.Font = new Font("Arial Black", 12F, FontStyle.Regular, GraphicsUnit.Point);
             lbTotalNfe.ForeColor = Color.Red;
-            lbTotalNfe.Location = new Point(430, 458);
+            lbTotalNfe.Location = new Point(710, 480);
             lbTotalNfe.Name = "lbTotalNfe";
             lbTotalNfe.Size = new Size(99, 23);
             lbTotalNfe.TabIndex = 43;
@@ -329,7 +331,7 @@
             // 
             label4.AutoSize = true;
             label4.Font = new Font("Arial Black", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            label4.Location = new Point(308, 458);
+            label4.Location = new Point(588, 480);
             label4.Name = "label4";
             label4.Size = new Size(99, 23);
             label4.TabIndex = 42;
@@ -340,7 +342,7 @@
             lbTotalNfce.AutoSize = true;
             lbTotalNfce.Font = new Font("Arial Black", 12F, FontStyle.Regular, GraphicsUnit.Point);
             lbTotalNfce.ForeColor = Color.Red;
-            lbTotalNfce.Location = new Point(430, 494);
+            lbTotalNfce.Location = new Point(710, 516);
             lbTotalNfce.Name = "lbTotalNfce";
             lbTotalNfce.Size = new Size(111, 23);
             lbTotalNfce.TabIndex = 45;
@@ -351,7 +353,7 @@
             // 
             label5.AutoSize = true;
             label5.Font = new Font("Arial Black", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            label5.Location = new Point(308, 494);
+            label5.Location = new Point(588, 516);
             label5.Name = "label5";
             label5.Size = new Size(111, 23);
             label5.TabIndex = 44;
@@ -597,7 +599,7 @@
             lblResultado.BackColor = Color.Red;
             lblResultado.Depth = 0;
             lblResultado.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Pixel);
-            lblResultado.Location = new Point(437, 528);
+            lblResultado.Location = new Point(717, 550);
             lblResultado.MouseState = MaterialSkin.MouseState.HOVER;
             lblResultado.Name = "lblResultado";
             lblResultado.Size = new Size(43, 19);
@@ -605,38 +607,38 @@
             lblResultado.Text = "Soma";
             lblResultado.Visible = false;
             // 
-            // Caixa
-            // 
-            Caixa.DataPropertyName = "caixa";
-            Caixa.HeaderText = "caixa";
-            Caixa.Name = "Caixa";
-            Caixa.Width = 60;
-            // 
-            // Chave
-            // 
-            Chave.DataPropertyName = "chavenfe";
-            Chave.HeaderText = "chavenfe";
-            Chave.Name = "Chave";
-            Chave.Width = 300;
-            // 
             // dataGridView1
             // 
             dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridView1.Columns.AddRange(new DataGridViewColumn[] { Chave, Caixa });
+            dataGridView1.Columns.AddRange(new DataGridViewColumn[] { Chave, num_caixa });
             dataGridView1.Location = new Point(280, 64);
             dataGridView1.Name = "dataGridView1";
             dataGridView1.RowTemplate.Height = 25;
             dataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dataGridView1.Size = new Size(497, 286);
+            dataGridView1.Size = new Size(981, 286);
             dataGridView1.TabIndex = 32;
+            // 
+            // Chave
+            // 
+            Chave.DataPropertyName = "chavenfe";
+            Chave.HeaderText = "Chave";
+            Chave.Name = "Chave";
+            Chave.Width = 300;
+            // 
+            // num_caixa
+            // 
+            num_caixa.DataPropertyName = "num_caixa";
+            num_caixa.HeaderText = "Caixa";
+            num_caixa.Name = "num_caixa";
+            num_caixa.Width = 60;
             // 
             // dataGridView2
             // 
             dataGridView2.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dataGridView2.Columns.AddRange(new DataGridViewColumn[] { NotaFaltante, CaixaFaltante });
-            dataGridView2.Location = new Point(540, 404);
+            dataGridView2.Location = new Point(843, 356);
             dataGridView2.Name = "dataGridView2";
-            dataGridView2.Size = new Size(240, 173);
+            dataGridView2.Size = new Size(418, 218);
             dataGridView2.TabIndex = 64;
             // 
             // NotaFaltante
@@ -654,27 +656,58 @@
             // progressBarSalvando
             // 
             progressBarSalvando.ForeColor = Color.Purple;
-            progressBarSalvando.Location = new Point(1, 583);
+            progressBarSalvando.Location = new Point(1, 580);
             progressBarSalvando.Name = "progressBarSalvando";
-            progressBarSalvando.Size = new Size(787, 15);
+            progressBarSalvando.Size = new Size(1260, 18);
             progressBarSalvando.TabIndex = 65;
             // 
             // labelTotalNotas
             // 
             labelTotalNotas.AutoSize = true;
-            labelTotalNotas.Location = new Point(311, 396);
+            labelTotalNotas.Location = new Point(591, 418);
             labelTotalNotas.Name = "labelTotalNotas";
             labelTotalNotas.Size = new Size(38, 15);
             labelTotalNotas.TabIndex = 66;
             labelTotalNotas.Text = "label9";
             labelTotalNotas.Visible = false;
             // 
+            // materialButton1
+            // 
+            materialButton1.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            materialButton1.Density = MaterialSkin.Controls.MaterialButton.MaterialButtonDensity.Default;
+            materialButton1.Depth = 0;
+            materialButton1.HighEmphasis = true;
+            materialButton1.Icon = null;
+            materialButton1.Location = new Point(178, 418);
+            materialButton1.Margin = new Padding(4, 6, 4, 6);
+            materialButton1.MouseState = MaterialSkin.MouseState.HOVER;
+            materialButton1.Name = "materialButton1";
+            materialButton1.NoAccentTextColor = Color.Empty;
+            materialButton1.Size = new Size(91, 36);
+            materialButton1.TabIndex = 67;
+            materialButton1.Text = "XMLS NFe";
+            materialButton1.Type = MaterialSkin.Controls.MaterialButton.MaterialButtonType.Contained;
+            materialButton1.UseAccentColor = false;
+            materialButton1.UseVisualStyleBackColor = true;
+            materialButton1.Click += materialButton1_Click;
+            // 
+            // label10
+            // 
+            label10.AutoSize = true;
+            label10.Location = new Point(280, 550);
+            label10.Name = "label10";
+            label10.Size = new Size(49, 15);
+            label10.TabIndex = 69;
+            label10.Text = "00:00:00";
+            // 
             // FormPrincipal
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             AutoSizeMode = AutoSizeMode.GrowAndShrink;
-            ClientSize = new Size(789, 601);
+            ClientSize = new Size(1267, 601);
+            Controls.Add(label10);
+            Controls.Add(materialButton1);
             Controls.Add(labelTotalNotas);
             Controls.Add(progressBarSalvando);
             Controls.Add(dataGridView2);
@@ -782,14 +815,15 @@
         private Label label7;
         private Label label8;
         private MaterialSkin.Controls.MaterialLabel lblResultado;
-        
-        private DataGridViewTextBoxColumn Caixa;
-        private DataGridViewTextBoxColumn Chave;
         private DataGridView dataGridView1;
         private DataGridView dataGridView2;
         private DataGridViewTextBoxColumn NotaFaltante;
         private DataGridViewTextBoxColumn CaixaFaltante;
         private ProgressBar progressBarSalvando;
         private Label labelTotalNotas;
+        private DataGridViewTextBoxColumn Chave;
+        private DataGridViewTextBoxColumn num_caixa;
+        private MaterialSkin.Controls.MaterialButton materialButton1;
+        private Label label10;
     }
 }

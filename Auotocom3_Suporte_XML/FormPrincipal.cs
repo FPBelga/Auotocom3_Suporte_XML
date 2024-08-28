@@ -69,16 +69,19 @@ namespace Auotocom3_Suporte_XML
             }
         }
 
-
         public void btnCarregarDados_Click(object sender, EventArgs e)
         {
+            // Inicia o cronômetro
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
+
             textDatabase.Text = "";
             textDatabase.Text = "Autocom3_Filial_Movimento_Mensal_" + textAno.Text + "_" + textMes.Text;
 
             string connectionString = $"Data Source={textServidor.Text},{textPorta.Text};Initial Catalog={textDatabase.Text};User Id={textLogin.Text};Password={textSenha.Text};Integrated Security=True;Encrypt=False";
 
             string Caixa = textCaixas.Text;
-            string[] caixas = Caixa.Split(',').Select(c => c.Trim()).ToArray(); // Definido aqui para estar disponível em todo o método
+            string[] caixas = Caixa.Split(',').Select(c => c.Trim()).ToArray();
 
             DateTime dataInicio;
             DateTime dataFim;
@@ -97,296 +100,377 @@ namespace Auotocom3_Suporte_XML
                 return;
             }
 
-            // Conversão das datas para o formato "yyyy-MM-dd"
             string dataInicioFormatada = dataInicio.ToString("yyyy-MM-dd");
             string dataFimFormatada = dataFim.ToString("yyyy-MM-dd");
 
-            string query = "SELECT chavenfe, arquivo, caixa, data, conteudo FROM repositorio_de_xml WHERE 1=1";
+            int pageSize = 1000; // Número de registros por página
+            int pageIndex = 0;
 
-            if (isDataInicioValida)
+            while (true)
             {
-                query += " AND data >= @dataInicioFormatada";
-            }
-
-            if (isDataFimValida)
-            {
-                query += " AND data <= @dataFimFormatada";
-            }
-
-            if (materialCheckbox1.Checked && caixas.Any())
-            {
-                query += $" AND caixa IN ({string.Join(",", caixas.Select(c => $"'{c}'"))} )";
-            }
-
-            // Adiciona a cláusula ORDER BY ao final da consulta
-            query += " ORDER BY arquivo ASC";
-
-            using (SqlConnection connection = new SqlConnection(connectionString))
-            {
-                SqlDataAdapter adapter = new SqlDataAdapter(query, connection);
+                string query = "SELECT " +
+                                " fiscal_r04.num_caixa," +
+                                " fiscal_r04.data," +
+                                " fiscal_r04.hora," +
+                                " fiscal_r04.c07," +
+                                " fiscal_r04.n14," +
+                                " fiscal_r04.nfe_cstat," +
+                                " fiscal_r04.nfe_chave," +
+                                " CASE " +
+                                "   WHEN fiscal_r04.nfe_cstat = 100 THEN 'FATURADA' " +
+                                "   WHEN fiscal_r04.nfe_cstat = 101 THEN 'CANCELADA' " +
+                                "   ELSE 'OUTRO' " +
+                                " END AS SITUACAO," +
+                                " repositorio_de_xml.chavenfe," +
+                                " repositorio_de_xml.arquivo," +
+                                " repositorio_de_xml.conteudo" +
+                                " FROM dbo.fiscal_r04 " +
+                                " JOIN repositorio_de_xml ON fiscal_r04.nfe_chave = repositorio_de_xml.chavenfe" +
+                                " WHERE 1=1";
 
                 if (isDataInicioValida)
                 {
-                    adapter.SelectCommand.Parameters.AddWithValue("@dataInicioFormatada", dataInicioFormatada);
+                    query += " AND fiscal_r04.data >= @dataInicioFormatada";
                 }
 
                 if (isDataFimValida)
                 {
-                    adapter.SelectCommand.Parameters.AddWithValue("@dataFimFormatada", dataFimFormatada);
+                    query += " AND fiscal_r04.data <= @dataFimFormatada";
                 }
 
-                DataTable dataTable = new DataTable();
-                adapter.Fill(dataTable);
-
-                decimal somaVNF = 0;
-                decimal valorAnterior = 0;
-                string pasta = "";
-
-                int totalNotas = 0;
-
-                int quantidadeMod55 = 0;
-                int quantidadeMod65 = 0;                
-
-                using (var fbd = new FolderBrowserDialog())
+                if (materialCheckbox1.Checked && caixas.Any())
                 {
-                    DialogResult result = fbd.ShowDialog();
-                    if (result == DialogResult.OK && !string.IsNullOrWhiteSpace(fbd.SelectedPath))
-                    {
-                        pasta = fbd.SelectedPath;
-                    }
-                    else
-                    {
-                        MessageBox.Show("Nenhuma pasta selecionada. Operação cancelada.");
-                        return;
-                    }
+                    query += $" AND fiscal_r04.num_caixa IN ({string.Join(",", caixas.Select(c => $"'{c}'"))} )";
                 }
 
-                int quantidadeArquivos = dataTable.Rows.Count;
+                query += " ORDER BY fiscal_r04.num_caixa, fiscal_r04.c07 ASC " +
+                         "OFFSET @offset ROWS FETCH NEXT @fetch ROWS ONLY";
 
-                progressBarSalvando.Maximum = quantidadeArquivos;
-                progressBarSalvando.Value = 0;
-
-                bool isFantasiaCapturada = false;  // Variável para controlar a captura da fantasia               
-
-                List<decimal> notasFaltantes = new List<decimal>();
-
-                string caixaAtual = null;
-
-
-                foreach (DataRow row in dataTable.Rows)
+                using (SqlConnection connection = new SqlConnection(connectionString))
                 {
-                    string conteudo = row["conteudo"].ToString();
-                    string arquivo = row["arquivo"].ToString();
-                    caixaAtual = row["caixa"].ToString();
+                    SqlDataAdapter adapter = new SqlDataAdapter(query, connection);
+                   
+                    // Definir o tempo limite da consulta para o DataAdapter
+                    adapter.SelectCommand.CommandTimeout = 120;  // Tempo em segundos
+                    adapter.SelectCommand.Parameters.AddWithValue("@offset", pageIndex * pageSize);
+                    adapter.SelectCommand.Parameters.AddWithValue("@fetch", pageSize);
 
-                    XDocument xmlDoc = XDocument.Parse(conteudo);
-
-                    XNamespace ns = xmlDoc.Root.GetDefaultNamespace();                   
-
-                    // Esta função pega o NF que não achar e armazena no Dbgridview2 <nNF> 
-                    foreach (var elemento in xmlDoc.Descendants(ns + "nNF"))
+                    if (isDataInicioValida)
                     {
-                        if (decimal.TryParse(elemento.Value, out decimal valorAtual))
-                        {
-                            // Adiciona os valores faltantes ao DataGridView
-                            if (valorAnterior != 0 && valorAtual > valorAnterior + 1)
-                            {
-                                for (decimal i = valorAnterior + 1; i < valorAtual; i++)
-                                {
-                                    // Adiciona ao novo DataGridView todas as notas faltantes
-                                    dataGridView2.Rows.Add(i, caixaAtual);
-                                    totalNotas++; // Incrementa o total de notas
-                                    // Debug.WriteLine($"Adicionando nota faltante: {i} - {Caixa}"); // Depuração
-                                }
-                            }                            
-
-                            // Atualiza o valor anterior
-                            valorAnterior = valorAtual;
-                     
-                        }
-                    }
-                    
-                    labelTotalNotas.Text = totalNotas.ToString();
-                    // Atualiza o DataGridView para garantir que os dados sejam exibidos
-                    dataGridView2.Refresh();
-
-                    // Captura o valor da tag <xFant> somente no primeiro arquivo
-                    if (!isFantasiaCapturada)
-                    {
-                        foreach (var elemento in xmlDoc.Descendants(ns + "xFant"))
-                        {
-                            fantasia = elemento.Value;  // Obtém o valor da tag <xFant>
-                            isFantasiaCapturada = true; // Marca que o valor já foi capturado
-                            break;  // Interrompe o loop após capturar o valor
-                        }
+                        adapter.SelectCommand.Parameters.AddWithValue("@dataInicioFormatada", dataInicioFormatada);
                     }
 
-                    foreach (var elemento in xmlDoc.Descendants(ns + "mod"))
+                    if (isDataFimValida)
                     {
-                        if (elemento.Value == "55")
+                        adapter.SelectCommand.Parameters.AddWithValue("@dataFimFormatada", dataFimFormatada);
+                    }
+
+                    DataTable dataTable = new DataTable();
+                    adapter.Fill(dataTable);
+
+                    if (dataTable.Rows.Count == 0)
+                    {
+                        break; // Saia do loop se não houver mais registros
+                    }
+
+                    decimal somaVNF = 0;
+                    decimal valorAnterior = 0;
+                    string pasta = "";
+
+                    int totalNotas = 0;
+                    int quantidadeMod55 = 0;
+                    int quantidadeMod65 = 0;
+
+                    using (var fbd = new FolderBrowserDialog())
+                    {
+                        DialogResult result = fbd.ShowDialog();
+                        if (result == DialogResult.OK && !string.IsNullOrWhiteSpace(fbd.SelectedPath))
                         {
-                            quantidadeMod55++;
+                            pasta = fbd.SelectedPath;
                         }
-                        else if (elemento.Value == "65")
+                        else
                         {
-                            quantidadeMod65++;
+                            MessageBox.Show("Nenhuma pasta selecionada. Operação cancelada.");
+                            return;
                         }
                     }
 
-                    foreach (var elemento in xmlDoc.Descendants(ns + "vNF"))
-                    {
-                        if (decimal.TryParse(elemento.Value, out decimal valor))
-                        {
-                            somaVNF += valor;
-                        }
-                    }                 
+                    int quantidadeArquivos = dataTable.Rows.Count;
 
-                    
-
-                    string pastaDestino;
-
-                    if (materialCheckbox1.Checked)
-                    {
-                        pastaDestino = Path.Combine(pasta, caixaAtual);
-                        if (!Directory.Exists(pastaDestino))
-                        {
-                            Directory.CreateDirectory(pastaDestino);
-                        }
-                    }
-                    else
-                    {
-                        pastaDestino = pasta;
-                    }
-
-                    string caminhoArquivo = Path.Combine(pastaDestino, $"{arquivo}.xml");
-
-                    if (File.Exists(caminhoArquivo))
-                    {
-                        File.Delete(caminhoArquivo);
-                    }
-
-                    xmlDoc.Save(caminhoArquivo);
-
-                    //VerificarNotasFaltantes(dataTable, novoDataGridView);
-
-                    progressBarSalvando.Value += 1;
-                    Application.DoEvents();
-                }
-
-                // Atualiza a interface com os resultados
-                MessageBox.Show($"Finalizado com sucesso: {dataTable.Rows.Count} registros processados.");
-                lbTotalNfe.Visible = true;
-                lbTotalNfe.Text = quantidadeMod55.ToString();
-                lbTotalNfce.Visible = true;
-                lbTotalNfce.Text = quantidadeMod65.ToString();
-                lbQtdNotas.Visible = true;
-                lbQtdNotas.Text = dataTable.Rows.Count.ToString();
-                lblResultado.Visible = true;
-                lblResultado.ForeColor = Color.Red;
-                progressBarSalvando.Value = 0;
-
-                // Formata o valor total de VNF
-                decimal valorFormatado = somaVNF / 100;
-                lblResultado.Text = valorFormatado.ToString("N2", new CultureInfo("pt-BR"));
-
-                // Remove a coluna 'conteudo' e atualiza o DataGridView
-                dataTable.Columns.Remove("conteudo");
-                dataTable.Columns.Remove("arquivo");
-                dataGridView1.DataSource = dataTable;
-
-
-                string zipNome;
-
-                if (materialCheckbox1.Checked)
-                {
-                    zipNome = $"XML_{fantasia}_{textMes.Text}_{textAno.Text}_{string.Join("_", caixas)}.zip";
-                }
-                else
-                {
-                    zipNome = $"XML_{fantasia}_{textMes.Text}_{textAno.Text}_Completo.zip";
-                }
-
-                string zipPath = Path.Combine(pasta, zipNome);
-                string pastaCompleto = Path.Combine(pasta, "XMLCompleto");
-
-                try
-                {
-                    // Verifica se o arquivo ZIP já existe
-                    if (File.Exists(zipPath))
-                    {
-                        // Se existir, apaga o arquivo ZIP antigo
-                        File.Delete(zipPath);
-                    }
-
-                    // Cria a pasta "XMLCompleto" para armazenar os arquivos antes de compactar
-                    if (!Directory.Exists(pastaCompleto))
-                    {
-                        Directory.CreateDirectory(pastaCompleto);
-                    }
-
-                    // Mover ou copiar os arquivos para a pasta "XMLCompleto" antes da compactação
-                    if (!materialCheckbox1.Checked)
-                    {
-                        foreach (string file in Directory.GetFiles(pasta, "*.xml"))
-                        {
-                            string destFile = Path.Combine(pastaCompleto, Path.GetFileName(file));
-                            File.Move(file, destFile);
-                        }
-                    }
-
-                    // Configura a barra de progresso
-                    string[] arquivosParaCompactar = Directory.GetFiles(materialCheckbox1.Checked ? pasta : pastaCompleto, "*.xml", SearchOption.AllDirectories);
-                    progressBarSalvando.Maximum = arquivosParaCompactar.Length;
+                    progressBarSalvando.Maximum = quantidadeArquivos;
                     progressBarSalvando.Value = 0;
 
-                    // Compacta a pasta ou arquivos dependendo do estado do checkbox
+                    bool isFantasiaCapturada = false;
+                    string caixaAtual = null;
+                    decimal c07Atual = 0;
+                    decimal? c07Anterior = null;
+                    List<decimal> notasFaltantes = new List<decimal>();
+                    List<decimal> c07Existentes = new List<decimal>();
+
+                    foreach (DataRow row in dataTable.Rows)
+                    {
+                        string conteudo = row["conteudo"].ToString();
+                        string arquivo = row["arquivo"].ToString();
+                        caixaAtual = row["num_caixa"].ToString();
+
+                        if (string.IsNullOrEmpty(conteudo))
+                        {
+                            // Adiciona ao DataGridView2 os registros que não possuem conteúdo
+                            if (decimal.TryParse(row["c07"].ToString(), out c07Atual))
+                            {
+                                dataGridView2.Rows.Add(c07Atual, caixaAtual);
+                                totalNotas++;
+                            }
+                            continue; // Continua para o próximo registro
+                        }
+
+                        // Converte o valor de c07 para decimal
+                        if (decimal.TryParse(row["c07"].ToString(), out c07Atual))
+                        {
+                            c07Existentes.Add(c07Atual);
+
+                            // Se c07Anterior não foi inicializado, ele recebe o valor de c07Atual
+                            if (!c07Anterior.HasValue)
+                            {
+                                c07Anterior = c07Atual;
+                            }
+
+                            // Adiciona os c07 que estão faltando na sequência
+                            if (c07Anterior.HasValue && c07Atual > c07Anterior.Value + 1)
+                            {
+                                for (decimal i = c07Anterior.Value + 1; i < c07Atual; i++)
+                                {
+                                    dataGridView2.Rows.Add(i, caixaAtual);
+                                    totalNotas++;
+                                }
+                            }
+
+                            // Atualiza c07Anterior para o próximo loop
+                            c07Anterior = c07Atual;
+                        }
+
+                        // Adiciona ao DataGridView os c07 que não possuem correspondência no conteúdo
+                        foreach (var c07 in c07Existentes)
+                        {
+                            if (!dataTable.AsEnumerable().Any(row => row.Field<string>("conteudo").Contains(c07.ToString())))
+                            {
+                                dataGridView2.Rows.Add(c07, caixaAtual);
+                                totalNotas++;
+                            }
+                        }
+
+                        XDocument xmlDoc;
+                        try
+                        {
+                            xmlDoc = XDocument.Parse(conteudo);
+                        }
+                        catch (Exception ex)
+                        {
+                            // Adiciona uma entrada ao DataGridView2 para o erro de parsing e continua
+                            if (decimal.TryParse(row["c07"].ToString(), out c07Atual))
+                            {
+                                dataGridView2.Rows.Add(c07Atual, caixaAtual);
+                                totalNotas++;
+                            }
+                            MessageBox.Show($"Erro ao processar o XML do arquivo '{arquivo}': {ex.Message}");
+                            continue; // Continua para o próximo registro
+                        }
+
+                        XNamespace ns = xmlDoc.Root.GetDefaultNamespace();
+
+                        // Captura o valor da tag <xFant> somente no primeiro arquivo
+                        if (!isFantasiaCapturada)
+                        {
+                            foreach (var elemento in xmlDoc.Descendants(ns + "xFant"))
+                            {
+                                fantasia = elemento.Value;
+                                isFantasiaCapturada = true;
+                                break;
+                            }
+                        }
+
+                        foreach (var elemento in xmlDoc.Descendants(ns + "mod"))
+                        {
+                            if (elemento.Value == "55")
+                            {
+                                quantidadeMod55++;
+                            }
+                            else if (elemento.Value == "65")
+                            {
+                                quantidadeMod65++;
+                            }
+                        }
+
+                        foreach (var elemento in xmlDoc.Descendants(ns + "vNF"))
+                        {
+                            if (decimal.TryParse(elemento.Value, out decimal valor))
+                            {
+                                somaVNF += valor;
+                            }
+                        }
+
+                        string pastaDestino;
+
+                        if (materialCheckbox1.Checked)
+                        {
+                            pastaDestino = Path.Combine(pasta, caixaAtual);
+                            if (!Directory.Exists(pastaDestino))
+                            {
+                                Directory.CreateDirectory(pastaDestino);
+                            }
+                        }
+                        else
+                        {
+                            pastaDestino = pasta;
+                        }
+
+                        string caminhoArquivo = Path.Combine(pastaDestino, $"{arquivo}.xml");
+
+                        if (File.Exists(caminhoArquivo))
+                        {
+                            File.Delete(caminhoArquivo);
+                        }
+
+                        xmlDoc.Save(caminhoArquivo);
+                        progressBarSalvando.Value += 1;
+                        Application.DoEvents();
+                    }
+
+                    // Adiciona as notas fiscais faltantes na sequência
+                    if (c07Existentes.Any())
+                    {
+                        decimal c07Min = c07Existentes.Min();
+                        decimal c07Max = c07Existentes.Max();
+                        for (decimal i = c07Min; i <= c07Max; i++)
+                        {
+                            if (!c07Existentes.Contains(i))
+                            {
+                                dataGridView2.Rows.Add(i, caixaAtual);
+                                totalNotas++;
+                            }
+                        }
+                    }
+
+                    // Para o cronômetro
+                    stopwatch.Stop();
+                    TimeSpan tempoTotal = stopwatch.Elapsed;
+
+                    // Atualiza o Label com o tempo total
+                    label10.Text = $"Tempo Total: {tempoTotal.TotalSeconds:F2} segundos";
+
+                    // Atualiza a interface com os resultados
+                    MessageBox.Show($"Finalizado com sucesso: {dataTable.Rows.Count} registros processados.");
+                    lbTotalNfe.Visible = true;
+                    lbTotalNfe.Text = quantidadeMod55.ToString();
+                    lbTotalNfce.Visible = true;
+                    lbTotalNfce.Text = quantidadeMod65.ToString();
+                    lbQtdNotas.Visible = true;
+                    lbQtdNotas.Text = dataTable.Rows.Count.ToString();
+                    lblResultado.Visible = true;
+                    lblResultado.ForeColor = Color.Red;
+                    progressBarSalvando.Value = 0;
+
+                    decimal valorFormatado = somaVNF / 100;
+                    lblResultado.Text = valorFormatado.ToString("N2", new CultureInfo("pt-BR"));
+
+                    // Remove a coluna 'conteudo' e atualiza o DataGridView
+                    dataTable.Columns.Remove("conteudo");
+                    dataGridView1.DataSource = dataTable;
+
+
+                    string zipNome;
+
                     if (materialCheckbox1.Checked)
                     {
-                        foreach (string caixa in caixas)
-                        {
-                            string pastaCaixa = Path.Combine(pasta, caixa);
-                            if (Directory.Exists(pastaCaixa))
-                            {
-                                ZipFile.CreateFromDirectory(pastaCaixa, zipPath);
-                                Directory.Delete(pastaCaixa, true);
-                            }
-                            progressBarSalvando.Value += 1;
-                            Application.DoEvents();
-                        }
+                        zipNome = $"XML_{fantasia}_{textMes.Text}_{textAno.Text}_{string.Join("_", caixas)}.zip";
                     }
                     else
                     {
-                        // Compacta a pasta "XMLCompleto"
-                        using (ZipArchive zip = ZipFile.Open(zipPath, ZipArchiveMode.Create))
+                        zipNome = $"XML_{fantasia}_{textMes.Text}_{textAno.Text}_Completo.zip";
+                    }
+
+                    string zipPath = Path.Combine(pasta, zipNome);
+                    string pastaCompleto = Path.Combine(pasta, "XMLCompleto");
+
+                    try
+                    {
+                        // Verifica se o arquivo ZIP já existe
+                        if (File.Exists(zipPath))
                         {
-                            foreach (string file in arquivosParaCompactar)
+                            // Se existir, apaga o arquivo ZIP antigo
+                            File.Delete(zipPath);
+                        }
+
+                        // Cria a pasta "XMLCompleto" para armazenar os arquivos antes de compactar
+                        if (!Directory.Exists(pastaCompleto))
+                        {
+                            Directory.CreateDirectory(pastaCompleto);
+                        }
+
+                        // Mover ou copiar os arquivos para a pasta "XMLCompleto" antes da compactação
+                        if (!materialCheckbox1.Checked)
+                        {
+                            foreach (string file in Directory.GetFiles(pasta, "*.xml"))
                             {
-                                zip.CreateEntryFromFile(file, Path.GetFileName(file));
+                                string destFile = Path.Combine(pastaCompleto, Path.GetFileName(file));
+                                File.Move(file, destFile);
+                            }
+                        }
+
+                        // Configura a barra de progresso
+                        string[] arquivosParaCompactar = Directory.GetFiles(materialCheckbox1.Checked ? pasta : pastaCompleto, "*.xml", SearchOption.AllDirectories);
+                        progressBarSalvando.Maximum = arquivosParaCompactar.Length;
+                        progressBarSalvando.Value = 0;
+
+                        // Compacta a pasta ou arquivos dependendo do estado do checkbox
+                        if (materialCheckbox1.Checked)
+                        {
+                            foreach (string caixa in caixas)
+                            {
+                                string pastaCaixa = Path.Combine(pasta, caixa);
+                                if (Directory.Exists(pastaCaixa))
+                                {
+                                    ZipFile.CreateFromDirectory(pastaCaixa, zipPath);
+                                    Directory.Delete(pastaCaixa, true);
+                                }
                                 progressBarSalvando.Value += 1;
                                 Application.DoEvents();
                             }
                         }
+                        else
+                        {
+                            // Compacta a pasta "XMLCompleto"
+                            using (ZipArchive zip = ZipFile.Open(zipPath, ZipArchiveMode.Create))
+                            {
+                                foreach (string file in arquivosParaCompactar)
+                                {
+                                    zip.CreateEntryFromFile(file, Path.GetFileName(file));
+                                    progressBarSalvando.Value += 1;
+                                    Application.DoEvents();
+                                }
+                            }
 
-                        // Após compactação, exclui a pasta "XMLCompleto" e seus arquivos
-                        Directory.Delete(pastaCompleto, true);
+                            // Após compactação, exclui a pasta "XMLCompleto" e seus arquivos
+                            Directory.Delete(pastaCompleto, true);
+                        }
+
+                        MessageBox.Show("Arquivos compactados e ZIP criado com sucesso!");
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Ocorreu um erro ao tentar compactar os arquivos: {ex.Message}");
                     }
 
-                    MessageBox.Show("Arquivos compactados e ZIP criado com sucesso!");
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show($"Ocorreu um erro ao tentar compactar os arquivos: {ex.Message}");
+                    // Habilita os botões relacionados a relatórios e envio de e-mail
+                    btnRelXMLPDF.Enabled = true;
+                    btnRelXMLEXCEL.Enabled = true;
+                    btnRelFaltntesLPDF.Enabled = true;
+                    btnRelFaltntesLEXCEL.Enabled = true;
+                    btnEnviarEmail.Enabled = true;
                 }
 
-                // Habilita os botões relacionados a relatórios e envio de e-mail
-                btnRelXMLPDF.Enabled = true;
-                btnRelXMLEXCEL.Enabled = true;
-                btnRelFaltntesLPDF.Enabled = true;
-                btnRelFaltntesLEXCEL.Enabled = true;
-                btnEnviarEmail.Enabled = true;
             }
-
-        }        
+        }
         private void btnRelXMLPDF_Click_1(object sender, EventArgs e)
         {
             using (SaveFileDialog saveFileDialog = new SaveFileDialog())
@@ -514,7 +598,7 @@ namespace Auotocom3_Suporte_XML
                 saveFileDialog.Filter = "PDF Files|*.pdf";
                 saveFileDialog.Title = "Salvar Relatório em PDF";
                 saveFileDialog.FileName = "Relatório dos XMLs Faltantes.pdf";
-                
+
 
                 if (saveFileDialog.ShowDialog() == DialogResult.OK)
                 {
@@ -540,7 +624,7 @@ namespace Auotocom3_Suporte_XML
                             PdfPTable table = new PdfPTable(dataGridView2.Columns.Count);
 
                             // Definir largura das colunas (ajuste os valores conforme necessário)
-                            float[] columnWidths = new float[] { 2f, 1f}; // exemplo de larguras personalizadas
+                            float[] columnWidths = new float[] { 2f, 1f }; // exemplo de larguras personalizadas
                             table.SetWidths(columnWidths);
 
                             // Adicionar cabeçalhos
@@ -558,7 +642,7 @@ namespace Auotocom3_Suporte_XML
                                 {
                                     table.AddCell(new Phrase(cell.Value?.ToString(), FontFactory.GetFont(FontFactory.HELVETICA, 08)));
                                 }
-                                
+
                             }
 
                             // Adicionar a tabela ao documento
@@ -642,11 +726,11 @@ namespace Auotocom3_Suporte_XML
 
         private void VerificarNotasFaltantes(DataTable dataTable, DataGridView novoDataGridView)
         {
-            
-                 decimal valorAnterior = 0;
 
-                // Limpa o DataGridView antes de adicionar novos valores
-                novoDataGridView.Rows.Clear();
+            decimal valorAnterior = 0;
+
+            // Limpa o DataGridView antes de adicionar novos valores
+            novoDataGridView.Rows.Clear();
 
             string conteudo = null;
             string arquivo = null;
@@ -690,6 +774,11 @@ namespace Auotocom3_Suporte_XML
                 // Caso ocorra um erro, exibe uma mensagem
                 MessageBox.Show($"Erro ao processar o arquivo {arquivo}: {ex.Message}");
             }
+        }
+
+        private void materialButton1_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("Em breve a função extrair xmls de NFe");
         }
     }
 }
