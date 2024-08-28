@@ -112,10 +112,11 @@ namespace Auotocom3_Suporte_XML
                             " fiscal_r04.n14," +
                             " fiscal_r04.nfe_cstat," +
                             " fiscal_r04.nfe_chave," +
+                            "fiscal_r04.nfe_canc," +
                             " CASE " +
-                            "   WHEN fiscal_r04.nfe_cstat = 100 THEN 'FATURADA' " +
-                            "   WHEN fiscal_r04.nfe_cstat = 101 THEN 'CANCELADA' " +
-                            "   ELSE 'OUTRO' " +
+                            "   WHEN (f.nfe_cstat = 100 OR f.nfe_cstat = 150) AND f.nfe_canc = '' THEN 'FATURADA' " +
+                            "   WHEN (f.nfe_cstat = 100 OR f.nfe_cstat = 150) AND f.nfe_canc = 101 THEN 'CANCELADA' " +
+                            "   ELSE 'PRE-NOTA' " +
                             " END AS SITUACAO," +
                             " repositorio_de_xml.chavenfe," +
                             " repositorio_de_xml.arquivo," +
@@ -145,6 +146,9 @@ namespace Auotocom3_Suporte_XML
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 SqlDataAdapter adapter = new SqlDataAdapter(query, connection);
+
+                // Definir o tempo limite da consulta para o DataAdapter
+                adapter.SelectCommand.CommandTimeout = 120;  // Tempo em segundos
 
                 if (isDataInicioValida)
                 {
@@ -213,7 +217,7 @@ namespace Auotocom3_Suporte_XML
                         // Adiciona ao DataGridView2 os registros que não possuem conteúdo
                         if (decimal.TryParse(row["c07"].ToString(), out decimal c07AtualSemConteudo))
                         {
-                            dataGridView2.Rows.Add(c07AtualSemConteudo, caixaAtual);
+                           // dataGridView2.Rows.Add(c07AtualSemConteudo, caixaAtual);
                             totalNotas++;
                         }
                         continue; // Continua para o próximo registro
@@ -249,17 +253,17 @@ namespace Auotocom3_Suporte_XML
                         }
                     }
 
-                    foreach (var elemento in xmlDoc.Descendants(ns + "mod"))
-                    {
-                        if (elemento.Value == "55")
-                        {
-                            quantidadeMod55++;
-                        }
-                        else if (elemento.Value == "65")
-                        {
-                            quantidadeMod65++;
-                        }
-                    }
+                    //foreach (var elemento in xmlDoc.Descendants(ns + "mod"))
+                    //{
+                    //    if (elemento.Value == "55")
+                    //    {
+                    //        quantidadeMod55++;
+                    //    }
+                    //    else if (elemento.Value == "65")
+                    //    {
+                    //        quantidadeMod65++;
+                    //    }
+                    //}
 
                     foreach (var elemento in xmlDoc.Descendants(ns + "vNF"))
                     {
