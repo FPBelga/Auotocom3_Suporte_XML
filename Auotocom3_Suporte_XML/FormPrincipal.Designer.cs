@@ -70,15 +70,15 @@
             label8 = new Label();
             lblResultado = new MaterialSkin.Controls.MaterialLabel();
             dataGridView1 = new DataGridView();
-            Chave = new DataGridViewTextBoxColumn();
-            num_caixa = new DataGridViewTextBoxColumn();
             dataGridView2 = new DataGridView();
             NotaFaltante = new DataGridViewTextBoxColumn();
             CaixaFaltante = new DataGridViewTextBoxColumn();
             progressBarSalvando = new ProgressBar();
             labelTotalNotas = new Label();
-            materialButton1 = new MaterialSkin.Controls.MaterialButton();
+            btnCarregaDados2 = new MaterialSkin.Controls.MaterialButton();
             label10 = new Label();
+            Chave = new DataGridViewTextBoxColumn();
+            caixa = new DataGridViewTextBoxColumn();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
             ((System.ComponentModel.ISupportInitialize)dataGridView2).BeginInit();
             SuspendLayout();
@@ -209,7 +209,7 @@
             // 
             // textDatabase
             // 
-            textDatabase.Location = new Point(336, 359);
+            textDatabase.Location = new Point(280, 356);
             textDatabase.Name = "textDatabase";
             textDatabase.Size = new Size(250, 23);
             textDatabase.TabIndex = 22;
@@ -610,27 +610,13 @@
             // dataGridView1
             // 
             dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridView1.Columns.AddRange(new DataGridViewColumn[] { Chave, num_caixa });
+            dataGridView1.Columns.AddRange(new DataGridViewColumn[] { Chave, caixa });
             dataGridView1.Location = new Point(280, 64);
             dataGridView1.Name = "dataGridView1";
             dataGridView1.RowTemplate.Height = 25;
             dataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dataGridView1.Size = new Size(981, 286);
             dataGridView1.TabIndex = 32;
-            // 
-            // Chave
-            // 
-            Chave.DataPropertyName = "chavenfe";
-            Chave.HeaderText = "Chave";
-            Chave.Name = "Chave";
-            Chave.Width = 300;
-            // 
-            // num_caixa
-            // 
-            num_caixa.DataPropertyName = "num_caixa";
-            num_caixa.HeaderText = "Caixa";
-            num_caixa.Name = "num_caixa";
-            num_caixa.Width = 60;
             // 
             // dataGridView2
             // 
@@ -664,32 +650,32 @@
             // labelTotalNotas
             // 
             labelTotalNotas.AutoSize = true;
-            labelTotalNotas.Location = new Point(591, 418);
+            labelTotalNotas.Location = new Point(536, 359);
             labelTotalNotas.Name = "labelTotalNotas";
             labelTotalNotas.Size = new Size(38, 15);
             labelTotalNotas.TabIndex = 66;
             labelTotalNotas.Text = "label9";
             labelTotalNotas.Visible = false;
             // 
-            // materialButton1
+            // btnCarregaDados2
             // 
-            materialButton1.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-            materialButton1.Density = MaterialSkin.Controls.MaterialButton.MaterialButtonDensity.Default;
-            materialButton1.Depth = 0;
-            materialButton1.HighEmphasis = true;
-            materialButton1.Icon = null;
-            materialButton1.Location = new Point(178, 418);
-            materialButton1.Margin = new Padding(4, 6, 4, 6);
-            materialButton1.MouseState = MaterialSkin.MouseState.HOVER;
-            materialButton1.Name = "materialButton1";
-            materialButton1.NoAccentTextColor = Color.Empty;
-            materialButton1.Size = new Size(91, 36);
-            materialButton1.TabIndex = 67;
-            materialButton1.Text = "XMLS NFe";
-            materialButton1.Type = MaterialSkin.Controls.MaterialButton.MaterialButtonType.Contained;
-            materialButton1.UseAccentColor = false;
-            materialButton1.UseVisualStyleBackColor = true;
-            materialButton1.Click += materialButton1_Click;
+            btnCarregaDados2.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            btnCarregaDados2.Density = MaterialSkin.Controls.MaterialButton.MaterialButtonDensity.Default;
+            btnCarregaDados2.Depth = 0;
+            btnCarregaDados2.HighEmphasis = true;
+            btnCarregaDados2.Icon = null;
+            btnCarregaDados2.Location = new Point(178, 418);
+            btnCarregaDados2.Margin = new Padding(4, 6, 4, 6);
+            btnCarregaDados2.MouseState = MaterialSkin.MouseState.HOVER;
+            btnCarregaDados2.Name = "btnCarregaDados2";
+            btnCarregaDados2.NoAccentTextColor = Color.Empty;
+            btnCarregaDados2.Size = new Size(91, 36);
+            btnCarregaDados2.TabIndex = 67;
+            btnCarregaDados2.Text = "XMLS NFe";
+            btnCarregaDados2.Type = MaterialSkin.Controls.MaterialButton.MaterialButtonType.Contained;
+            btnCarregaDados2.UseAccentColor = false;
+            btnCarregaDados2.UseVisualStyleBackColor = true;
+            btnCarregaDados2.Click += btnCarregaDados2_Click;
             // 
             // label10
             // 
@@ -700,6 +686,20 @@
             label10.TabIndex = 69;
             label10.Text = "00:00:00";
             // 
+            // Chave
+            // 
+            Chave.DataPropertyName = "chavenfe";
+            Chave.HeaderText = "Chave";
+            Chave.Name = "Chave";
+            Chave.Width = 300;
+            // 
+            // caixa
+            // 
+            caixa.DataPropertyName = "caixa";
+            caixa.HeaderText = "Caixa";
+            caixa.Name = "caixa";
+            caixa.Width = 60;
+            // 
             // FormPrincipal
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -707,7 +707,7 @@
             AutoSizeMode = AutoSizeMode.GrowAndShrink;
             ClientSize = new Size(1267, 601);
             Controls.Add(label10);
-            Controls.Add(materialButton1);
+            Controls.Add(btnCarregaDados2);
             Controls.Add(labelTotalNotas);
             Controls.Add(progressBarSalvando);
             Controls.Add(dataGridView2);
@@ -821,9 +821,9 @@
         private DataGridViewTextBoxColumn CaixaFaltante;
         private ProgressBar progressBarSalvando;
         private Label labelTotalNotas;
-        private DataGridViewTextBoxColumn Chave;
-        private DataGridViewTextBoxColumn num_caixa;
-        private MaterialSkin.Controls.MaterialButton materialButton1;
+        private MaterialSkin.Controls.MaterialButton btnCarregaDados2;
         private Label label10;
+        private DataGridViewTextBoxColumn Chave;
+        private DataGridViewTextBoxColumn caixa;
     }
 }
