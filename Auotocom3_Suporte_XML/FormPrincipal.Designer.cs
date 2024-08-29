@@ -70,6 +70,8 @@
             label8 = new Label();
             lblResultado = new MaterialSkin.Controls.MaterialLabel();
             dataGridView1 = new DataGridView();
+            Chave = new DataGridViewTextBoxColumn();
+            caixa = new DataGridViewTextBoxColumn();
             dataGridView2 = new DataGridView();
             NotaFaltante = new DataGridViewTextBoxColumn();
             CaixaFaltante = new DataGridViewTextBoxColumn();
@@ -77,8 +79,9 @@
             labelTotalNotas = new Label();
             btnCarregaDados2 = new MaterialSkin.Controls.MaterialButton();
             label10 = new Label();
-            Chave = new DataGridViewTextBoxColumn();
-            caixa = new DataGridViewTextBoxColumn();
+            materialButton1 = new MaterialSkin.Controls.MaterialButton();
+            checkedListBoxNota = new CheckedListBox();
+            btnRelXMLPDF2 = new MaterialSkin.Controls.MaterialButton();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
             ((System.ComponentModel.ISupportInitialize)dataGridView2).BeginInit();
             SuspendLayout();
@@ -194,7 +197,7 @@
             btnCarregarDados.Depth = 0;
             btnCarregarDados.HighEmphasis = true;
             btnCarregarDados.Icon = null;
-            btnCarregarDados.Location = new Point(19, 418);
+            btnCarregarDados.Location = new Point(375, 535);
             btnCarregarDados.Margin = new Padding(4, 6, 4, 6);
             btnCarregarDados.MouseState = MaterialSkin.MouseState.HOVER;
             btnCarregarDados.Name = "btnCarregarDados";
@@ -205,6 +208,7 @@
             btnCarregarDados.Type = MaterialSkin.Controls.MaterialButton.MaterialButtonType.Contained;
             btnCarregarDados.UseAccentColor = false;
             btnCarregarDados.UseVisualStyleBackColor = true;
+            btnCarregarDados.Visible = false;
             btnCarregarDados.Click += btnCarregarDados_Click;
             // 
             // textDatabase
@@ -302,7 +306,7 @@
             btnRelXMLPDF.Enabled = false;
             btnRelXMLPDF.HighEmphasis = true;
             btnRelXMLPDF.Icon = null;
-            btnRelXMLPDF.Location = new Point(63, 474);
+            btnRelXMLPDF.Location = new Point(63, 453);
             btnRelXMLPDF.Margin = new Padding(4, 6, 4, 6);
             btnRelXMLPDF.MouseState = MaterialSkin.MouseState.HOVER;
             btnRelXMLPDF.Name = "btnRelXMLPDF";
@@ -366,7 +370,7 @@
             btnTestarConexao.Depth = 0;
             btnTestarConexao.HighEmphasis = true;
             btnTestarConexao.Icon = null;
-            btnTestarConexao.Location = new Point(280, 354);
+            btnTestarConexao.Location = new Point(408, 535);
             btnTestarConexao.Margin = new Padding(4, 6, 4, 6);
             btnTestarConexao.MouseState = MaterialSkin.MouseState.HOVER;
             btnTestarConexao.Name = "btnTestarConexao";
@@ -384,7 +388,7 @@
             // 
             label2.AutoSize = true;
             label2.Font = new Font("Arial Black", 5F, FontStyle.Bold, GraphicsUnit.Point);
-            label2.Location = new Point(72, 458);
+            label2.Location = new Point(72, 437);
             label2.Name = "label2";
             label2.Size = new Size(97, 10);
             label2.TabIndex = 47;
@@ -398,7 +402,7 @@
             btnRelXMLEXCEL.Enabled = false;
             btnRelXMLEXCEL.HighEmphasis = true;
             btnRelXMLEXCEL.Icon = null;
-            btnRelXMLEXCEL.Location = new Point(176, 474);
+            btnRelXMLEXCEL.Location = new Point(176, 453);
             btnRelXMLEXCEL.Margin = new Padding(4, 6, 4, 6);
             btnRelXMLEXCEL.MouseState = MaterialSkin.MouseState.HOVER;
             btnRelXMLEXCEL.Name = "btnRelXMLEXCEL";
@@ -419,7 +423,7 @@
             btnRelFaltntesLEXCEL.Enabled = false;
             btnRelFaltntesLEXCEL.HighEmphasis = true;
             btnRelFaltntesLEXCEL.Icon = null;
-            btnRelFaltntesLEXCEL.Location = new Point(176, 532);
+            btnRelFaltntesLEXCEL.Location = new Point(176, 511);
             btnRelFaltntesLEXCEL.Margin = new Padding(4, 6, 4, 6);
             btnRelFaltntesLEXCEL.MouseState = MaterialSkin.MouseState.HOVER;
             btnRelFaltntesLEXCEL.Name = "btnRelFaltntesLEXCEL";
@@ -436,7 +440,7 @@
             // 
             label6.AutoSize = true;
             label6.Font = new Font("Arial Black", 5F, FontStyle.Regular, GraphicsUnit.Point);
-            label6.Location = new Point(72, 516);
+            label6.Location = new Point(72, 495);
             label6.Name = "label6";
             label6.Size = new Size(104, 10);
             label6.TabIndex = 50;
@@ -450,7 +454,7 @@
             btnRelFaltntesLPDF.Enabled = false;
             btnRelFaltntesLPDF.HighEmphasis = true;
             btnRelFaltntesLPDF.Icon = null;
-            btnRelFaltntesLPDF.Location = new Point(63, 532);
+            btnRelFaltntesLPDF.Location = new Point(63, 511);
             btnRelFaltntesLPDF.Margin = new Padding(4, 6, 4, 6);
             btnRelFaltntesLPDF.MouseState = MaterialSkin.MouseState.HOVER;
             btnRelFaltntesLPDF.Name = "btnRelFaltntesLPDF";
@@ -618,6 +622,20 @@
             dataGridView1.Size = new Size(981, 286);
             dataGridView1.TabIndex = 32;
             // 
+            // Chave
+            // 
+            Chave.DataPropertyName = "chavenfe";
+            Chave.HeaderText = "Chave";
+            Chave.Name = "Chave";
+            Chave.Width = 300;
+            // 
+            // caixa
+            // 
+            caixa.DataPropertyName = "caixa";
+            caixa.HeaderText = "Caixa";
+            caixa.Name = "caixa";
+            caixa.Width = 60;
+            // 
             // dataGridView2
             // 
             dataGridView2.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
@@ -664,7 +682,7 @@
             btnCarregaDados2.Depth = 0;
             btnCarregaDados2.HighEmphasis = true;
             btnCarregaDados2.Icon = null;
-            btnCarregaDados2.Location = new Point(178, 418);
+            btnCarregaDados2.Location = new Point(394, 535);
             btnCarregaDados2.Margin = new Padding(4, 6, 4, 6);
             btnCarregaDados2.MouseState = MaterialSkin.MouseState.HOVER;
             btnCarregaDados2.Name = "btnCarregaDados2";
@@ -675,6 +693,7 @@
             btnCarregaDados2.Type = MaterialSkin.Controls.MaterialButton.MaterialButtonType.Contained;
             btnCarregaDados2.UseAccentColor = false;
             btnCarregaDados2.UseVisualStyleBackColor = true;
+            btnCarregaDados2.Visible = false;
             btnCarregaDados2.Click += btnCarregaDados2_Click;
             // 
             // label10
@@ -686,19 +705,56 @@
             label10.TabIndex = 69;
             label10.Text = "00:00:00";
             // 
-            // Chave
+            // materialButton1
             // 
-            Chave.DataPropertyName = "chavenfe";
-            Chave.HeaderText = "Chave";
-            Chave.Name = "Chave";
-            Chave.Width = 300;
+            materialButton1.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            materialButton1.Density = MaterialSkin.Controls.MaterialButton.MaterialButtonDensity.Default;
+            materialButton1.Depth = 0;
+            materialButton1.HighEmphasis = true;
+            materialButton1.Icon = null;
+            materialButton1.Location = new Point(625, 402);
+            materialButton1.Margin = new Padding(4, 6, 4, 6);
+            materialButton1.MouseState = MaterialSkin.MouseState.HOVER;
+            materialButton1.Name = "materialButton1";
+            materialButton1.NoAccentTextColor = Color.Empty;
+            materialButton1.Size = new Size(130, 36);
+            materialButton1.TabIndex = 72;
+            materialButton1.Text = "Carregar XML";
+            materialButton1.Type = MaterialSkin.Controls.MaterialButton.MaterialButtonType.Contained;
+            materialButton1.UseAccentColor = false;
+            materialButton1.UseVisualStyleBackColor = true;
+            materialButton1.Click += materialButton1_Click;
             // 
-            // caixa
+            // checkedListBoxNota
             // 
-            caixa.DataPropertyName = "caixa";
-            caixa.HeaderText = "Caixa";
-            caixa.Name = "caixa";
-            caixa.Width = 60;
+            checkedListBoxNota.FormattingEnabled = true;
+            checkedListBoxNota.Items.AddRange(new object[] { "NFCE", "NFE" });
+            checkedListBoxNota.Location = new Point(280, 394);
+            checkedListBoxNota.Name = "checkedListBoxNota";
+            checkedListBoxNota.Size = new Size(142, 76);
+            checkedListBoxNota.TabIndex = 73;
+            checkedListBoxNota.ItemCheck += checkedListBoxNota_ItemCheck;
+            // 
+            // btnRelXMLPDF2
+            // 
+            btnRelXMLPDF2.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            btnRelXMLPDF2.Density = MaterialSkin.Controls.MaterialButton.MaterialButtonDensity.Default;
+            btnRelXMLPDF2.Depth = 0;
+            btnRelXMLPDF2.Enabled = false;
+            btnRelXMLPDF2.HighEmphasis = true;
+            btnRelXMLPDF2.Icon = null;
+            btnRelXMLPDF2.Location = new Point(54, 453);
+            btnRelXMLPDF2.Margin = new Padding(4, 6, 4, 6);
+            btnRelXMLPDF2.MouseState = MaterialSkin.MouseState.HOVER;
+            btnRelXMLPDF2.Name = "btnRelXMLPDF2";
+            btnRelXMLPDF2.NoAccentTextColor = Color.Empty;
+            btnRelXMLPDF2.Size = new Size(64, 36);
+            btnRelXMLPDF2.TabIndex = 74;
+            btnRelXMLPDF2.Text = "PDF";
+            btnRelXMLPDF2.Type = MaterialSkin.Controls.MaterialButton.MaterialButtonType.Contained;
+            btnRelXMLPDF2.UseAccentColor = false;
+            btnRelXMLPDF2.UseVisualStyleBackColor = true;
+            btnRelXMLPDF2.Click += btnRelXMLPDF2_Click;
             // 
             // FormPrincipal
             // 
@@ -706,6 +762,9 @@
             AutoScaleMode = AutoScaleMode.Font;
             AutoSizeMode = AutoSizeMode.GrowAndShrink;
             ClientSize = new Size(1267, 601);
+            Controls.Add(btnRelXMLPDF2);
+            Controls.Add(checkedListBoxNota);
+            Controls.Add(materialButton1);
             Controls.Add(label10);
             Controls.Add(btnCarregaDados2);
             Controls.Add(labelTotalNotas);
@@ -825,5 +884,10 @@
         private Label label10;
         private DataGridViewTextBoxColumn Chave;
         private DataGridViewTextBoxColumn caixa;
+        private MaterialSkin.Controls.MaterialCheckbox CheckboxNFCE;
+        private MaterialSkin.Controls.MaterialCheckbox CheckboxNFE;
+        private MaterialSkin.Controls.MaterialButton materialButton1;
+        private CheckedListBox checkedListBoxNota;
+        private MaterialSkin.Controls.MaterialButton btnRelXMLPDF2;
     }
 }
