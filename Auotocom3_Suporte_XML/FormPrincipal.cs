@@ -1046,7 +1046,14 @@ namespace Auotocom3_Suporte_XML
         }
 
         private void materialButton1_Click(object sender, EventArgs e)
-        {          
+        {
+            // Verifica se nenhum item está selecionado no CheckedListBox
+            if (checkedListBoxNota.CheckedItems.Count == 0)
+            {
+                // Exibe uma mensagem para o usuário caso nada esteja marcado
+                MessageBox.Show("Por favor, selecione uma opção ('NFCE' ou 'NFE') no checklist antes de prosseguir.", "Seleção Obrigatória", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return; // Sai do método para evitar a execução de código adicional
+            }
 
             // Verifica se o item "NFCE" está selecionado no CheckedListBox
             if (checkedListBoxNota.CheckedItems.Contains("NFCE"))
@@ -1150,8 +1157,7 @@ namespace Auotocom3_Suporte_XML
                     string pasta = "";
 
                     int totalNotas = 0;
-                    int quantidadeMod55 = 0;
-                    int quantidadeMod65 = 0;
+                    
 
                     using (var fbd = new FolderBrowserDialog())
                     {
@@ -1299,10 +1305,9 @@ namespace Auotocom3_Suporte_XML
 
                     // Atualiza a interface com os resultados
                     MessageBox.Show($"Finalizado com sucesso: {dataTable.Rows.Count} registros processados.");
-                    lbTotalNfe.Visible = true;
-                    lbTotalNfe.Text = quantidadeMod55.ToString();
+                   
                     lbTotalNfce.Visible = true;
-                    lbTotalNfce.Text = quantidadeMod65.ToString();
+                    lbTotalNfce.Text = quantidadeArquivos.ToString();
                     lbQtdNotas.Visible = true;
                     lbQtdNotas.Text = dataTable.Rows.Count.ToString();
                     lblResultado.Visible = true;
@@ -1407,7 +1412,7 @@ namespace Auotocom3_Suporte_XML
                     btnEnviarEmail.Enabled = true;
                 }
             }
-            if (checkedListBoxNota.CheckedItems.Contains("NFE"))
+            else if (checkedListBoxNota.CheckedItems.Contains("NFE"))
             {
                 // Executa a ação alternativa se "NFCE" não estiver selecionado
                 // Código para a ação alternativa se "NFCE" não estiver selecionado
@@ -1724,10 +1729,11 @@ namespace Auotocom3_Suporte_XML
                 btnRelFaltntesLEXCEL.Enabled = true;
                 btnEnviarEmail.Enabled = true;
             }
-  
+
             else
             {
-                MessageBox.Show("Escolha uma das opções a ser filtrada - (NFCE / NFE)");
+                // Exibe uma mensagem se "NFCE" e "NFE" não estiverem selecionados
+                MessageBox.Show("Por favor, selecione 'NFCE' ou 'NFE' no checklist para continuar.", "Seleção Obrigatória", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
         }
         private void checkedListBoxNota_ItemCheck(object sender, ItemCheckEventArgs e)
