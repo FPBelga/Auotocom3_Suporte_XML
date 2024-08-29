@@ -743,7 +743,7 @@
             btnRelXMLPDF2.Enabled = false;
             btnRelXMLPDF2.HighEmphasis = true;
             btnRelXMLPDF2.Icon = null;
-            btnRelXMLPDF2.Location = new Point(54, 453);
+            btnRelXMLPDF2.Location = new Point(63, 453);
             btnRelXMLPDF2.Margin = new Padding(4, 6, 4, 6);
             btnRelXMLPDF2.MouseState = MaterialSkin.MouseState.HOVER;
             btnRelXMLPDF2.Name = "btnRelXMLPDF2";
@@ -816,7 +816,7 @@
             Name = "FormPrincipal";
             Sizable = false;
             StartPosition = FormStartPosition.CenterScreen;
-            Text = "Extrair XML - SUPORTE AUTOCOM3 - Versão: 1.1";
+            Text = "Extrair XML - SUPORTE AUTOCOM3 - Versão: 1.2";
             ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
             ((System.ComponentModel.ISupportInitialize)dataGridView2).EndInit();
             ResumeLayout(false);
