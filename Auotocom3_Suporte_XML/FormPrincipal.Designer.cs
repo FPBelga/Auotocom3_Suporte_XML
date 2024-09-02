@@ -143,7 +143,6 @@
             textCaixas.Name = "textCaixas";
             textCaixas.Size = new Size(250, 23);
             textCaixas.TabIndex = 4;
-            textCaixas.Text = "001";
             textCaixas.TextAlign = HorizontalAlignment.Center;
             // 
             // materialLabel5
@@ -520,7 +519,6 @@
             textDataIni.Name = "textDataIni";
             textDataIni.Size = new Size(90, 23);
             textDataIni.TabIndex = 5;
-            textDataIni.Text = "01/08/2024";
             textDataIni.TextAlign = HorizontalAlignment.Center;
             textDataIni.ValidatingType = typeof(DateTime);
             // 
@@ -531,7 +529,6 @@
             textDataFim.Name = "textDataFim";
             textDataFim.Size = new Size(89, 23);
             textDataFim.TabIndex = 6;
-            textDataFim.Text = "01/08/2024";
             textDataFim.TextAlign = HorizontalAlignment.Center;
             textDataFim.ValidatingType = typeof(DateTime);
             // 

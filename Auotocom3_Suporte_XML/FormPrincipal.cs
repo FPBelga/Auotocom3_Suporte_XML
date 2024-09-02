@@ -15,6 +15,7 @@ using System.Diagnostics;
 using System.Windows.Forms;
 using DocumentFormat.OpenXml.InkML;
 using DocumentFormat.OpenXml.Spreadsheet;
+using System.Xml;
 
 namespace Auotocom3_Suporte_XML
 {
@@ -474,7 +475,90 @@ namespace Auotocom3_Suporte_XML
             FormEnviaEmail formEnviaEmail = new FormEnviaEmail(this);
             formEnviaEmail.ShowDialog();
         }
+        //private void ExportToExcel()
+        //{
+        //    // Creating a Excel object.
+        //    Microsoft.Office.Interop.Excel._Application excel = new Microsoft.Office.Interop.Excel.Application();
+        //    Microsoft.Office.Interop.Excel._Workbook workbook = excel.Workbooks.Add(Type.Missing);
+        //    Microsoft.Office.Interop.Excel._Worksheet worksheet = null;
 
+        //    try
+        //    {
+
+        //        worksheet = workbook.ActiveSheet;
+
+        //        worksheet.Name = "ExportedFromDatGrid";
+
+        //        int cellRowIndex = 1;
+        //        int cellColumnIndex = 1;
+
+        //        //Loop through each row and read value from each column.
+        //        for (int i = 0; i < dgvCityDetails.Rows.Count - 1; i++)
+        //        {
+        //            for (int j = 0; j < dgvCityDetails.Columns.Count; j++)
+        //            {
+        //                // Excel index starts from 1,1. As first Row would have the Column headers, adding a condition check.
+        //                if (cellRowIndex == 1)
+        //                {
+        //                    worksheet.Cells[cellRowIndex, cellColumnIndex] = dgvCityDetails.Columns[j].HeaderText;
+        //                }
+        //                else
+        //                {
+        //                    worksheet.Cells[cellRowIndex, cellColumnIndex] = dgvCityDetails.Rows[i].Cells[j].Value.ToString();
+        //                }
+        //                cellColumnIndex++;
+        //            }
+        //            cellColumnIndex = 1;
+        //            cellRowIndex++;
+        //        }
+
+        //        //Getting the location and file name of the excel to save from user.
+        //        SaveFileDialog saveDialog = new SaveFileDialog();
+        //        saveDialog.Filter = "Excel files (*.xlsx)|*.xlsx|All files (*.*)|*.*";
+        //        saveDialog.FilterIndex = 2;
+
+        //        if (saveDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+        //        {
+        //            workbook.SaveAs(saveDialog.FileName);
+        //            MessageBox.Show("Export Successful");
+        //        }
+        //    }
+        //    catch (System.Exception ex)
+        //    {
+        //        MessageBox.Show(ex.Message);
+        //    }
+        //    finally
+        //    {
+        //        excel.Quit();
+        //        workbook = null;
+        //        excel = null;
+        //    }
+
+        //}
+        //private void btn_xml_Click(object sender, EventArgs e)
+        //{
+        //    string FileName = @"C:\Xml_Entrada\2053- CITROLEO.xml";
+        //    List<ClasseItensXml> ListaItens = new List<ClasseItensXml>(); //A lista é do tipo ClasseItensXml
+        //    XmlDocument doc = new XmlDocument();
+        //    doc.Load(FileName);
+        //    var proditens = doc.GetElementsByTagName("prod");
+
+        //    foreach (XmlElement nodo in proditens)
+        //    {
+        //        ListaItens.Add(
+        //             new ClasseItensXml()
+        //             {
+        //                 CodigoProduto = nodo.GetElementsByTagName("cProd")[0].InnerText.Trim(),
+        //                 NomeProduto = nodo.GetElementsByTagName("xProd")[0].InnerText.Trim(),
+        //                 QuantidadeComercializada = nodo.GetElementsByTagName("qCom")[0].InnerText.Trim()
+        //             });
+
+        //        //Repare que cada "nodo" é um item, portanto só adiciona um ClasseItensXml na lista.
+        //    }
+
+        //    dgw_Xml.DataSource = ListaItens; //por fim, usa a lista de source
+
+        //}
         private void materialButton1_Click(object sender, EventArgs e)
         {
             // Verifica se nenhum item está selecionado no CheckedListBox
