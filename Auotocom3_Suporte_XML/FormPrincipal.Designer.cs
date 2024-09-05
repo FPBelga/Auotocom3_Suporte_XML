@@ -84,7 +84,7 @@
             progressBarSalvando = new ProgressBar();
             labelTotalNotas = new Label();
             label10 = new Label();
-            materialButton1 = new MaterialSkin.Controls.MaterialButton();
+            btnCarregarDados = new MaterialSkin.Controls.MaterialButton();
             checkedListBoxNota = new CheckedListBox();
             btnRelXMLPDF2 = new MaterialSkin.Controls.MaterialButton();
             NFCE = new MaterialSkin.Controls.MaterialCheckbox();
@@ -93,6 +93,10 @@
             NFE2 = new MaterialSkin.Controls.MaterialCheckbox();
             label9 = new Label();
             btnRelXMLEXCEL2 = new MaterialSkin.Controls.MaterialButton();
+            btnCarregaScantech = new MaterialSkin.Controls.MaterialButton();
+            materialButton2 = new MaterialSkin.Controls.MaterialButton();
+            materialLabel10 = new MaterialSkin.Controls.MaterialLabel();
+            textBanco = new TextBox();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
             ((System.ComponentModel.ISupportInitialize)dataGridView2).BeginInit();
             SuspendLayout();
@@ -110,7 +114,7 @@
             // materialCheckbox1
             // 
             materialCheckbox1.Depth = 0;
-            materialCheckbox1.Location = new Point(64, 285);
+            materialCheckbox1.Location = new Point(63, 313);
             materialCheckbox1.Margin = new Padding(0);
             materialCheckbox1.MouseLocation = new Point(-1, -1);
             materialCheckbox1.MouseState = MaterialSkin.MouseState.HOVER;
@@ -127,7 +131,7 @@
             materialLabel6.Depth = 0;
             materialLabel6.Font = new Font("Roboto", 14F, FontStyle.Bold, GraphicsUnit.Pixel);
             materialLabel6.FontType = MaterialSkin.MaterialSkinManager.fontType.Button;
-            materialLabel6.Location = new Point(-15, 295);
+            materialLabel6.Location = new Point(-15, 327);
             materialLabel6.MouseState = MaterialSkin.MouseState.HOVER;
             materialLabel6.Name = "materialLabel6";
             materialLabel6.RightToLeft = RightToLeft.No;
@@ -139,7 +143,7 @@
             // textCaixas
             // 
             textCaixas.Enabled = false;
-            textCaixas.Location = new Point(19, 317);
+            textCaixas.Location = new Point(19, 348);
             textCaixas.Name = "textCaixas";
             textCaixas.Size = new Size(250, 23);
             textCaixas.TabIndex = 4;
@@ -150,7 +154,7 @@
             materialLabel5.Depth = 0;
             materialLabel5.Font = new Font("Roboto", 14F, FontStyle.Bold, GraphicsUnit.Pixel);
             materialLabel5.FontType = MaterialSkin.MaterialSkinManager.fontType.Button;
-            materialLabel5.Location = new Point(0, 259);
+            materialLabel5.Location = new Point(0, 296);
             materialLabel5.MouseState = MaterialSkin.MouseState.HOVER;
             materialLabel5.Name = "materialLabel5";
             materialLabel5.RightToLeft = RightToLeft.No;
@@ -459,7 +463,7 @@
             // 
             // textAno
             // 
-            textAno.Location = new Point(59, 258);
+            textAno.Location = new Point(59, 295);
             textAno.Name = "textAno";
             textAno.Size = new Size(59, 23);
             textAno.TabIndex = 1;
@@ -468,7 +472,7 @@
             // 
             // textMes
             // 
-            textMes.Location = new Point(203, 258);
+            textMes.Location = new Point(203, 295);
             textMes.Name = "textMes";
             textMes.Size = new Size(66, 23);
             textMes.TabIndex = 2;
@@ -480,7 +484,7 @@
             materialLabel7.Depth = 0;
             materialLabel7.Font = new Font("Roboto", 14F, FontStyle.Bold, GraphicsUnit.Pixel);
             materialLabel7.FontType = MaterialSkin.MaterialSkinManager.fontType.Button;
-            materialLabel7.Location = new Point(137, 259);
+            materialLabel7.Location = new Point(137, 296);
             materialLabel7.MouseState = MaterialSkin.MouseState.HOVER;
             materialLabel7.Name = "materialLabel7";
             materialLabel7.RightToLeft = RightToLeft.No;
@@ -503,7 +507,7 @@
             materialLabel8.Depth = 0;
             materialLabel8.Font = new Font("Roboto", 14F, FontStyle.Bold, GraphicsUnit.Pixel);
             materialLabel8.FontType = MaterialSkin.MaterialSkinManager.fontType.Button;
-            materialLabel8.Location = new Point(41, 348);
+            materialLabel8.Location = new Point(41, 372);
             materialLabel8.MouseState = MaterialSkin.MouseState.HOVER;
             materialLabel8.Name = "materialLabel8";
             materialLabel8.RightToLeft = RightToLeft.No;
@@ -515,7 +519,7 @@
             // textDataIni
             // 
             textDataIni.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
-            textDataIni.Location = new Point(28, 367);
+            textDataIni.Location = new Point(28, 391);
             textDataIni.Name = "textDataIni";
             textDataIni.Size = new Size(90, 23);
             textDataIni.TabIndex = 5;
@@ -525,7 +529,7 @@
             // textDataFim
             // 
             textDataFim.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
-            textDataFim.Location = new Point(168, 367);
+            textDataFim.Location = new Point(168, 391);
             textDataFim.Name = "textDataFim";
             textDataFim.Size = new Size(89, 23);
             textDataFim.TabIndex = 6;
@@ -537,7 +541,7 @@
             materialLabel9.Depth = 0;
             materialLabel9.Font = new Font("Roboto", 14F, FontStyle.Bold, GraphicsUnit.Pixel);
             materialLabel9.FontType = MaterialSkin.MaterialSkinManager.fontType.Button;
-            materialLabel9.Location = new Point(176, 348);
+            materialLabel9.Location = new Point(176, 372);
             materialLabel9.MouseState = MaterialSkin.MouseState.HOVER;
             materialLabel9.Name = "materialLabel9";
             materialLabel9.RightToLeft = RightToLeft.No;
@@ -571,7 +575,7 @@
             // 
             label7.AutoSize = true;
             label7.Font = new Font("Segoe UI", 7F, FontStyle.Regular, GraphicsUnit.Point);
-            label7.Location = new Point(32, 392);
+            label7.Location = new Point(32, 416);
             label7.Name = "label7";
             label7.Size = new Size(63, 12);
             label7.TabIndex = 60;
@@ -581,7 +585,7 @@
             // 
             label8.AutoSize = true;
             label8.Font = new Font("Segoe UI", 7F, FontStyle.Regular, GraphicsUnit.Point);
-            label8.Location = new Point(173, 392);
+            label8.Location = new Point(173, 416);
             label8.Name = "label8";
             label8.Size = new Size(63, 12);
             label8.TabIndex = 61;
@@ -730,25 +734,25 @@
             label10.TabIndex = 69;
             label10.Text = "00:00:00";
             // 
-            // materialButton1
+            // btnCarregarDados
             // 
-            materialButton1.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-            materialButton1.Density = MaterialSkin.Controls.MaterialButton.MaterialButtonDensity.Default;
-            materialButton1.Depth = 0;
-            materialButton1.HighEmphasis = true;
-            materialButton1.Icon = null;
-            materialButton1.Location = new Point(275, 495);
-            materialButton1.Margin = new Padding(4, 6, 4, 6);
-            materialButton1.MouseState = MaterialSkin.MouseState.HOVER;
-            materialButton1.Name = "materialButton1";
-            materialButton1.NoAccentTextColor = Color.Empty;
-            materialButton1.Size = new Size(130, 36);
-            materialButton1.TabIndex = 72;
-            materialButton1.Text = "Carregar XML";
-            materialButton1.Type = MaterialSkin.Controls.MaterialButton.MaterialButtonType.Contained;
-            materialButton1.UseAccentColor = false;
-            materialButton1.UseVisualStyleBackColor = true;
-            materialButton1.Click += materialButton1_Click;
+            btnCarregarDados.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            btnCarregarDados.Density = MaterialSkin.Controls.MaterialButton.MaterialButtonDensity.Default;
+            btnCarregarDados.Depth = 0;
+            btnCarregarDados.HighEmphasis = true;
+            btnCarregarDados.Icon = null;
+            btnCarregarDados.Location = new Point(275, 495);
+            btnCarregarDados.Margin = new Padding(4, 6, 4, 6);
+            btnCarregarDados.MouseState = MaterialSkin.MouseState.HOVER;
+            btnCarregarDados.Name = "btnCarregarDados";
+            btnCarregarDados.NoAccentTextColor = Color.Empty;
+            btnCarregarDados.Size = new Size(130, 36);
+            btnCarregarDados.TabIndex = 72;
+            btnCarregarDados.Text = "Carregar XML";
+            btnCarregarDados.Type = MaterialSkin.Controls.MaterialButton.MaterialButtonType.Contained;
+            btnCarregarDados.UseAccentColor = false;
+            btnCarregarDados.UseVisualStyleBackColor = true;
+            btnCarregarDados.Click += btnCarregarDados_Click;
             // 
             // checkedListBoxNota
             // 
@@ -883,17 +887,88 @@
             btnRelXMLEXCEL2.UseVisualStyleBackColor = true;
             btnRelXMLEXCEL2.Click += btnRelXMLEXCEL2_Click;
             // 
+            // btnCarregaScantech
+            // 
+            btnCarregaScantech.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            btnCarregaScantech.Density = MaterialSkin.Controls.MaterialButton.MaterialButtonDensity.Default;
+            btnCarregaScantech.Depth = 0;
+            btnCarregaScantech.HighEmphasis = true;
+            btnCarregaScantech.Icon = null;
+            btnCarregaScantech.Location = new Point(439, 388);
+            btnCarregaScantech.Margin = new Padding(4, 6, 4, 6);
+            btnCarregaScantech.MouseState = MaterialSkin.MouseState.HOVER;
+            btnCarregaScantech.Name = "btnCarregaScantech";
+            btnCarregaScantech.NoAccentTextColor = Color.Empty;
+            btnCarregaScantech.Size = new Size(98, 36);
+            btnCarregaScantech.TabIndex = 77;
+            btnCarregaScantech.Text = "SCANTECH";
+            btnCarregaScantech.Type = MaterialSkin.Controls.MaterialButton.MaterialButtonType.Contained;
+            btnCarregaScantech.UseAccentColor = false;
+            btnCarregaScantech.UseVisualStyleBackColor = true;
+            btnCarregaScantech.Visible = false;
+            btnCarregaScantech.Click += btnCarregaScantech_Click;
+            // 
+            // materialButton2
+            // 
+            materialButton2.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            materialButton2.Density = MaterialSkin.Controls.MaterialButton.MaterialButtonDensity.Default;
+            materialButton2.Depth = 0;
+            materialButton2.Enabled = false;
+            materialButton2.HighEmphasis = true;
+            materialButton2.Icon = null;
+            materialButton2.Location = new Point(540, 388);
+            materialButton2.Margin = new Padding(4, 6, 4, 6);
+            materialButton2.MouseState = MaterialSkin.MouseState.HOVER;
+            materialButton2.Name = "materialButton2";
+            materialButton2.NoAccentTextColor = Color.Empty;
+            materialButton2.Size = new Size(129, 36);
+            materialButton2.TabIndex = 78;
+            materialButton2.Text = "PDF SCANTECH";
+            materialButton2.Type = MaterialSkin.Controls.MaterialButton.MaterialButtonType.Contained;
+            materialButton2.UseAccentColor = false;
+            materialButton2.UseVisualStyleBackColor = true;
+            materialButton2.Visible = false;
+            materialButton2.Click += materialButton2_Click;
+            // 
+            // materialLabel10
+            // 
+            materialLabel10.Depth = 0;
+            materialLabel10.Font = new Font("Roboto", 14F, FontStyle.Bold, GraphicsUnit.Pixel);
+            materialLabel10.FontType = MaterialSkin.MaterialSkinManager.fontType.Button;
+            materialLabel10.Location = new Point(6, 248);
+            materialLabel10.MouseState = MaterialSkin.MouseState.HOVER;
+            materialLabel10.Name = "materialLabel10";
+            materialLabel10.RightToLeft = RightToLeft.No;
+            materialLabel10.Size = new Size(270, 17);
+            materialLabel10.TabIndex = 80;
+            materialLabel10.Text = "Banco";
+            materialLabel10.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // textBanco
+            // 
+            textBanco.Enabled = false;
+            textBanco.Location = new Point(19, 266);
+            textBanco.Name = "textBanco";
+            textBanco.Size = new Size(250, 23);
+            textBanco.TabIndex = 79;
+            textBanco.Text = "Autocom3_Filial_Movimento_Mensal";
+            textBanco.TextAlign = HorizontalAlignment.Center;
+            // 
             // FormPrincipal
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             AutoSizeMode = AutoSizeMode.GrowAndShrink;
             ClientSize = new Size(940, 601);
+            Controls.Add(materialLabel10);
+            Controls.Add(textBanco);
+            Controls.Add(materialButton2);
+            Controls.Add(btnCarregaScantech);
             Controls.Add(btnRelXMLEXCEL2);
             Controls.Add(label9);
             Controls.Add(btnRelXMLPDF2);
             Controls.Add(checkedListBoxNota);
-            Controls.Add(materialButton1);
+            Controls.Add(btnCarregarDados);
             Controls.Add(label10);
             Controls.Add(labelTotalNotas);
             Controls.Add(progressBarSalvando);
@@ -1009,7 +1084,7 @@
         private Label label10;
         private MaterialSkin.Controls.MaterialCheckbox CheckboxNFCE;
         private MaterialSkin.Controls.MaterialCheckbox CheckboxNFE;
-        private MaterialSkin.Controls.MaterialButton materialButton1;
+        private MaterialSkin.Controls.MaterialButton btnCarregarDados;
         private CheckedListBox checkedListBoxNota;
         private MaterialSkin.Controls.MaterialButton btnRelXMLPDF2;
         private MaterialSkin.Controls.MaterialCheckbox NFCE;
@@ -1020,5 +1095,9 @@
         private DataGridViewTextBoxColumn Chave;
         private DataGridViewTextBoxColumn num_caixa;
         private MaterialSkin.Controls.MaterialButton btnRelXMLEXCEL2;
+        private MaterialSkin.Controls.MaterialButton btnCarregaScantech;
+        private MaterialSkin.Controls.MaterialButton materialButton2;
+        private MaterialSkin.Controls.MaterialLabel materialLabel10;
+        private TextBox textBanco;
     }
 }

@@ -1,17 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Globalization;
-using System.Linq;
-using System.Net.Mail;
-using System.Net;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using Auotocom3_Suporte_XML;
+﻿using Auotocom3_Suporte_XML;
 using MaterialSkin;
+using System.Net;
+using System.Net.Mail;
+using System.Text;
 
 namespace Autocom3_Suporte_XML
 {
@@ -20,7 +11,7 @@ namespace Autocom3_Suporte_XML
         private FormPrincipal _formPrincipal;
         public FormEnviaEmail(FormPrincipal formPrincipal)
         {
-            
+
             InitializeComponent();
             _formPrincipal = formPrincipal; // Atribua o parâmetro à variável
             textSenha.PasswordChar = '*'; // Define o caractere de máscara como asterisco (*)
@@ -40,7 +31,7 @@ namespace Autocom3_Suporte_XML
             textSenha.KeyDown += new KeyEventHandler(textBox_KeyDown);
             btnEnviarEmail.KeyDown += new KeyEventHandler(textBox_KeyDown);
         }
-  
+
         private void btnCancelar_Click(object sender, EventArgs e)
         {
             Close();
@@ -50,7 +41,7 @@ namespace Autocom3_Suporte_XML
         {
 
             string emailDestino = textDestinatario.Text.Trim();
-            string emailRemetende = textRemetente.Text.Trim()+"@autocom3.com.br";
+            string emailRemetende = textRemetente.Text.Trim() + "@autocom3.com.br";
             string senhaRemetende = textSenha.Text.Trim();
 
             if (string.IsNullOrWhiteSpace(emailDestino))
@@ -64,7 +55,7 @@ namespace Autocom3_Suporte_XML
             {
                 MessageBox.Show("E-mail Remetente não foi inserido. Operação cancelada.");
                 return;
-            }          
+            }
 
             string textMes = _formPrincipal.textMes.Text;
             string textAno = _formPrincipal.textAno.Text;
@@ -83,41 +74,41 @@ namespace Autocom3_Suporte_XML
                     // Verifica se o usuário selecionou arquivos
                     if (result == DialogResult.OK && ofd.FileNames.Length > 0)
                     {
-                    
-                    //Configuração do cliente SMTP
-                    SmtpClient smtpClient = new SmtpClient()
-                    {
-                        Host = "smtp.uni5.net",
-                        UseDefaultCredentials = false, // vamos utilizar credencias especificas
-                        Credentials = new NetworkCredential(emailRemetende.Trim(), senhaRemetende), // seu usuário e senha para autenticação
-                        EnableSsl = false, // GMail requer SSL
-                        Port = 587,      // porta para SSL
-                        DeliveryMethod = SmtpDeliveryMethod.Network, // modo de envio
 
-                    };
+                        //Configuração do cliente SMTP
+                        SmtpClient smtpClient = new SmtpClient()
+                        {
+                            Host = "smtp.uni5.net",
+                            UseDefaultCredentials = false, // vamos utilizar credencias especificas
+                            Credentials = new NetworkCredential(emailRemetende.Trim(), senhaRemetende), // seu usuário e senha para autenticação
+                            EnableSsl = false, // GMail requer SSL
+                            Port = 587,      // porta para SSL
+                            DeliveryMethod = SmtpDeliveryMethod.Network, // modo de envio
 
-                    if (smtpClient == null)
-                    {
-                        MessageBox.Show("smtpClient não foi inicializado.");
-                        return;
-                    }
+                        };
 
-                    // Criação do e-mail
-                    MailMessage mail = new MailMessage();
-                    mail.From = new MailAddress(emailRemetende);
-                    mail.To.Add(emailDestino);
-                    mail.Subject = $"Arquivos XML gerados do mês de {textMes}/{textAno} para a empresa {fantasia}.";
-                    mail.Body = $"Em anexo estão os arquivos XML gerados do mês de {textMes}/{textAno} para a empresa {fantasia}.";
-                    mail.BodyEncoding = Encoding.GetEncoding("ISO-8859-1");
-                    mail.Priority = MailPriority.Normal;
-                       
+                        if (smtpClient == null)
+                        {
+                            MessageBox.Show("smtpClient não foi inicializado.");
+                            return;
+                        }
 
-                       // Adiciona os arquivos como anexo
-                    foreach (string arquivo in ofd.FileNames)
-                    {
-                        Attachment anexo = new Attachment(arquivo);
-                        mail.Attachments.Add(anexo);
-                    }
+                        // Criação do e-mail
+                        MailMessage mail = new MailMessage();
+                        mail.From = new MailAddress(emailRemetende);
+                        mail.To.Add(emailDestino);
+                        mail.Subject = $"Arquivos XML gerados do mês de {textMes}/{textAno} para a empresa {fantasia}.";
+                        mail.Body = $"Em anexo estão os arquivos XML gerados do mês de {textMes}/{textAno} para a empresa {fantasia}.";
+                        mail.BodyEncoding = Encoding.GetEncoding("ISO-8859-1");
+                        mail.Priority = MailPriority.Normal;
+
+
+                        // Adiciona os arquivos como anexo
+                        foreach (string arquivo in ofd.FileNames)
+                        {
+                            Attachment anexo = new Attachment(arquivo);
+                            mail.Attachments.Add(anexo);
+                        }
 
                         // Envia o e-mail
                         smtpClient.Send(mail);
