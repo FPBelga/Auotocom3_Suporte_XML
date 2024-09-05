@@ -644,6 +644,7 @@
             dataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dataGridView1.Size = new Size(657, 286);
             dataGridView1.TabIndex = 32;
+           
             // 
             // Chave
             // 
